@@ -1,0 +1,6 @@
+.DS_STORE
+.ipynb_checkpoints
+*.csv
+*.pdf
+Forecast-When.html
+Forecast-How_Many.html

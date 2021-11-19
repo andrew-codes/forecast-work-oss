@@ -1,0 +1,32 @@
+{
+  "name": "Python 3.8",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  // Uncomment to use docker-compose
+  // "dockerComposeFile": "docker-compose.yml",
+  // "service": "dev",
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash",
+    "python.pythonPath": "/usr/local/bin/python",
+    "python.linting.enabled": false,
+    "python.linting.pylintEnabled": false
+  },
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "ms-python.python",
+    "ms-toolsai.jupyter",
+    "ms-toolsai.jupyter-renderers",
+    "yzhang.markdown-all-in-one",
+    "esbenp.prettier-vscode"
+  ],
+
+  "mounts": [
+    "source=${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
+    "source=${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind"
+  ],
+  // "postCreateCommand": "pip3 install -r requirements.txt",
+  "shutdownAction": "none"
+}
