@@ -9,7 +9,11 @@ RUN pip install jupyterlab \
     matplotlib \
     seaborn \
     nbconvert
+
 RUN jupyter serverextension enable --py jupyterlab
+
+RUN mkdir -p /usr/local/bin
+RUN ln -s /usr/bin/gpg /usr/local/bin/gpg
 
 WORKDIR /app
 
