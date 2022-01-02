@@ -27,6 +27,6 @@
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind"
   ],
-  // "postCreateCommand": "pip3 install -r requirements.txt",
+  "postCreateCommand": "pip3 install -r requirements.txt && jupyter serverextension enable --py jupyterlab",
   "shutdownAction": "none"
 }
