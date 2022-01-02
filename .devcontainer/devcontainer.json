@@ -24,8 +24,8 @@
   ],
 
   "mounts": [
-    "source=${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
-    "source=${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind"
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
+    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind"
   ],
   // "postCreateCommand": "pip3 install -r requirements.txt",
   "shutdownAction": "none"
