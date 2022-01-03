@@ -1,0 +1,15 @@
+{
+  "name": "@andrew-codes/forecast-work",
+  "description": "Forecast work based on historical data",
+  "private": true,
+  "author": {
+    "name": "Andrew Smith",
+    "url": "'https://andrew.codes"
+  },
+  "scripts": {
+    "start": "nodemon src/app.py"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
