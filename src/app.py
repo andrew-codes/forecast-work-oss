@@ -56,6 +56,10 @@ def select_all_team_members():
 
 def clear_team_members():
     team_member_multi_choice_selection.value = []
+    if selected_members == []:
+        throughput_figure.renderers = []
+        distribution_figure.renderers = []
+        return
 
 
 def render_graphs():
