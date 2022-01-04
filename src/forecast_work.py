@@ -23,6 +23,15 @@ from dotenv import load_dotenv
 from glom import glom
 
 load_dotenv()
+query = getenv("DEFAULT_QUERY") or ""
+ado_url = getenv("ADO_URL") or ""
+access_token = getenv("ACCESS_TOKEN") or ""
+historical_input_data = None
+all_members = []
+selected_members = []
+report_type = 0
+simulation_days = 0
+last_days = 0
 
 
 def forecast_work(doc):
@@ -213,16 +222,6 @@ def forecast_work(doc):
     def select_team_member(attr, old, new):
         global selected_members
         selected_members = new
-
-    query = getenv("DEFAULT_QUERY") or ""
-    ado_url = getenv("ADO_URL") or ""
-    access_token = getenv("ACCESS_TOKEN") or ""
-    historical_input_data = None
-    all_members = []
-    selected_members = []
-    report_type = 0
-    simulation_days = 0
-    last_days = 0
 
     input_ado_url = TextInput(placeholder="ADO URL", value=ado_url)
     input_ado_url.on_change("value", set_ado_url)
