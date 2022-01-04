@@ -1,12 +1,11 @@
 import base64
-import datetime
+from datetime import date
 import json
 from functools import reduce
 from io import StringIO
 from os import getenv
-from bokeh.models.widgets.tables import DataTable, DateFormatter, TableColumn
-
-import numpy as np
+from bokeh.models.widgets.tables import DataTable, TableColumn
+from numpy import number
 import pandas as pd
 import requests
 import yaml
@@ -32,12 +31,15 @@ query = (
 ado_url = getenv("ADO_URL") or ""
 access_token = getenv("ACCESS_TOKEN") or ""
 historical_input_data = None
-table_data = ColumnDataSource(data=dict(ClosedBy=[], ClosedDate=[]))
+empty_table_data = dict(ClosedBy=[], ClosedDate=[])
+table_data = ColumnDataSource(data=empty_table_data)
 all_members = []
 selected_members = []
 report_type = 0
 simulation_days = 0
 last_days = 0
+simulation_start_date = date.today()
+number_of_simulation_items = 0
 
 
 def forecast_work(doc):
@@ -90,8 +92,15 @@ def forecast_work(doc):
         global historical_input_data
         global all_members
         global table_data
-        if access_token == None:
+        table_data.data = empty_table_data
+        if access_token == "" or query == "" or ado_url == "":
             return
+
+        with open("src/.env", "w") as f:
+            f.write(f'ADO_URL="{ado_url}"\n')
+            f.write(f'ACCESS_TOKEN="{access_token}"\n')
+            f.write(f'DEFAULT_QUERY="{query}"\n')
+
         authorization_value = "Basic " + str(
             base64.b64encode(bytes(":" + access_token, "utf-8")), "utf-8"
         )
@@ -148,6 +157,7 @@ def forecast_work(doc):
     def set_forecast_type(attr, old, new):
         global report_type
         report_type = new
+        clear_charts()
         simulation_days_input.visible = report_type == 0
 
     def set_last_days(attr, old, new):
@@ -168,31 +178,68 @@ def forecast_work(doc):
             distribution_figure.renderers = []
             return
 
+    def sample_when_fn(dataset):
+        def simulate_days(data, scope):
+            days = 0
+            total = 0
+            while total <= scope:
+                total += dataset.sample(n=1).iloc[0].Throughput
+                days += 1
+            completion_date = simulation_start_date + pd.Timedelta(days, unit="d")
+            return completion_date
+
+        return simulate_days(dataset, number_of_simulation_items)
+
+    def clear_charts():
+        throughput_figure.renderers = []
+        distribution_figure.renderers = []
+        forecast_how_many_figure.renderers = []
+        forecast_when_figure.renderers = []
+        forecast_how_many_figure.visible = False
+        forecast_when_figure.visible = False
+
     def render_graphs():
-        if selected_members == []:
-            throughput_figure.renderers = []
-            distribution_figure.renderers = []
-            return
+        clear_charts()
 
         throughput = compute_throughput()
+        distribution = (
+            compute_distribution(
+                lambda dataset: dataset.sample(n=simulation_days, replace=True).sum()[
+                    "User Story"
+                ],
+                throughput,
+                "Items",
+            )
+            if report_type == 0
+            else compute_distribution(sample_when_fn, throughput, "Date")
+        )
         render_throughput(throughput)
-        render_monte_carlo_distribution(throughput)
+        render_distribution(distribution)
+        render_forecast(distribution)
 
-    def render_monte_carlo_distribution(throughput):
-        distribution_figure.renderers = []
-        simulations = 10000
-        dataset = throughput[["User Story"]].tail(last_days).reset_index(drop=True)
-        samples = [
-            dataset.sample(n=simulation_days, replace=True).sum()["User Story"]
-            for i in range(simulations)
-        ]
-        print(samples)
-        samples = pd.DataFrame(samples, columns=["Items"])
-        distribution = samples.groupby(["Items"]).size().reset_index(name="Frequency")
-        print(distribution)
+    def render_forecast(distribution):
+        if report_type == 0:
+            distribution = distribution.sort_index(ascending=False)
+            distribution["Probability"] = (
+                100 * distribution.Frequency.cumsum() / distribution.Frequency.sum()
+            )
+            forecast_how_many_figure.vbar(
+                distribution["Items"], top=distribution["Probability"], width=0.5
+            )
+            forecast_how_many_figure.visible = True
+
+    def render_distribution(distribution):
         distribution_figure.vbar(
             distribution["Items"], top=distribution["Frequency"], width=0.5
         )
+
+    def compute_distribution(sample_fn, throughput, group_by):
+        simulations = 10000
+        dataset = throughput[["User Story"]].tail(last_days).reset_index(drop=True)
+        samples = [sample_fn(dataset) for i in range(simulations)]
+        samples = pd.DataFrame(samples, columns=[group_by])
+        distribution = samples.groupby([group_by]).size().reset_index(name="Frequency")
+        return distribution
 
     def compute_throughput():
         filtered_data = historical_input_data[
@@ -228,7 +275,6 @@ def forecast_work(doc):
             throughput["User Story"].resample("W-Mon").sum(),
         ).reset_index()
         figure_source = ColumnDataSource(throughput_per_week)
-        throughput_figure.renderers = []
         throughput_figure.line("Date", "User Story", source=figure_source)
 
     def select_team_member(attr, old, new):
@@ -265,6 +311,7 @@ def forecast_work(doc):
         input_customize_query,
         query_button,
         input_data_table,
+        sizing_mode="stretch_both",
     )
 
     forecast_type_selection = RadioGroup(
@@ -279,7 +326,9 @@ def forecast_work(doc):
     how_many_type_options = Row(simulation_days_input)
     when_type_options = Row()
     forecast_type_controls = Column(
-        forecast_type_selection, how_many_type_options, when_type_options
+        forecast_type_selection,
+        how_many_type_options,
+        when_type_options,
     )
 
     team_member_multi_choice_selection = MultiChoice(
@@ -307,6 +356,7 @@ def forecast_work(doc):
         last_days_input,
         team_member_selection_controls,
         run_button,
+        sizing_mode="stretch_width",
     )
 
     throughput_hover_tools = HoverTool(
@@ -346,9 +396,57 @@ def forecast_work(doc):
     )
     distribution_figure.add_tools(distribution_hover_tools)
 
-    figures_layout = Column(throughput_figure, distribution_figure)
+    forecast_how_many_figure = figure(
+        plot_height=400,
+        x_axis_label="Total Items Completed",
+        y_axis_label="Confidence",
+    )
+    forecast_how_many_figure.visible = False
+    forecast_how_many_hover_tools = HoverTool(
+        tooltips=[
+            ("Items Completed", "@x{%0.000000f}"),
+            ("Confidence", "@top{%0.00f}"),
+        ],
+        formatters={
+            "@x": "printf",
+            "@top": "printf",
+        },
+    )
+    forecast_how_many_figure.add_tools(forecast_how_many_hover_tools)
 
-    layout = Row(input_data_layout, setup_controls_layout, figures_layout)
+    forecast_when_figure = figure(
+        title=f"Probabilities of Completion Dates for {number_of_simulation_items} Items",
+        plot_height=400,
+        x_axis_label="Completion Date",
+        y_axis_label="Confidence",
+    )
+    forecast_when_figure.visible = False
+    forecast_when_hover_tools = HoverTool(
+        tooltips=[
+            ("Completion Date", "@x{%0.000000f}"),
+            ("Confidence", "@top{%0.00f}"),
+        ],
+        formatters={
+            "@x": "datetime",
+            "@top": "printf",
+        },
+    )
+    forecast_when_figure.add_tools(forecast_when_hover_tools)
+
+    figures_layout = Column(
+        throughput_figure,
+        distribution_figure,
+        forecast_how_many_figure,
+        forecast_when_figure,
+    )
+
+    layout = Column(
+        Row(
+            input_data_layout,
+            setup_controls_layout,
+            figures_layout,
+        ),
+    )
 
     doc.add_root(layout)
     doc.theme = Theme(
