@@ -1,8 +1,10 @@
 import base64
+import datetime
 import json
 from functools import reduce
 from io import StringIO
 from os import getenv
+from bokeh.models.widgets.tables import DataTable, DateFormatter, TableColumn
 
 import numpy as np
 import pandas as pd
@@ -23,10 +25,14 @@ from dotenv import load_dotenv
 from glom import glom
 
 load_dotenv()
-query = getenv("DEFAULT_QUERY") or ""
+query = (
+    getenv("DEFAULT_QUERY")
+    or "Select [System.Id] From WorkItems Where [System.WorkItemType] = 'User Story' AND [State] = 'Closed'"
+)
 ado_url = getenv("ADO_URL") or ""
 access_token = getenv("ACCESS_TOKEN") or ""
 historical_input_data = None
+table_data = ColumnDataSource(data=dict(ClosedBy=[], ClosedDate=[]))
 all_members = []
 selected_members = []
 report_type = 0
@@ -83,6 +89,7 @@ def forecast_work(doc):
     def query_work_items():
         global historical_input_data
         global all_members
+        global table_data
         if access_token == None:
             return
         authorization_value = "Basic " + str(
@@ -123,6 +130,20 @@ def forecast_work(doc):
             historical_input_data["Microsoft.VSTS.Common.ClosedBy"].unique().tolist()
         )
         team_member_multi_choice_selection.options = all_members
+        table_data.data = dict(
+            {
+                "ClosedDate": [
+                    value
+                    for value in historical_input_data[
+                        "Microsoft.VSTS.Common.ClosedDate"
+                    ]
+                ],
+                "ClosedBy": [
+                    str(value)
+                    for value in historical_input_data["Microsoft.VSTS.Common.ClosedBy"]
+                ],
+            }
+        )
 
     def set_forecast_type(attr, old, new):
         global report_type
@@ -158,25 +179,20 @@ def forecast_work(doc):
         render_monte_carlo_distribution(throughput)
 
     def render_monte_carlo_distribution(throughput):
+        distribution_figure.renderers = []
         simulations = 10000
-        dataset = throughput[["Story"]].tail(last_days).reset_index(drop=True)
+        dataset = throughput[["User Story"]].tail(last_days).reset_index(drop=True)
         samples = [
-            dataset.sample(n=simulation_days, replace=True).sum()["Story"]
+            dataset.sample(n=simulation_days, replace=True).sum()["User Story"]
             for i in range(simulations)
         ]
+        print(samples)
         samples = pd.DataFrame(samples, columns=["Items"])
         distribution = samples.groupby(["Items"]).size().reset_index(name="Frequency")
+        print(distribution)
         distribution_figure.vbar(
             distribution["Items"], top=distribution["Frequency"], width=0.5
         )
-        # ax.set_title(
-        #     f"Distribution of Monte Carlo Simulation 'How Many' ({simulations} Runs)",
-        #     loc="left",
-        #     fontdict={"size": 18, "weight": "semibold"},
-        # )
-        # ax.set_xlabel(f"Total Items Completed in {simulation_days} Days")
-        # ax.set_ylabel("Frequency")
-        # ax.axhline(y=simulations * 0.001, color=darkgrey, alpha=0.5)
 
     def compute_throughput():
         filtered_data = historical_input_data[
@@ -205,19 +221,15 @@ def forecast_work(doc):
             .astype(int)
             .rename_axis("Date")
         )
-        throughput_df = pd.DataFrame(
-            {
-                "All": throughput["Total Throughput"].resample("W-Mon").sum(),
-                "Story": throughput["User Story"].resample("W-Mon").sum(),
-                # "Defect": throughput["Defect Throughput"].resample("W-Mon").sum(),
-            }
-        ).reset_index()
-        return throughput_df
+        return throughput
 
     def render_throughput(throughput):
-        figure_source = ColumnDataSource(throughput)
+        throughput_per_week = pd.DataFrame(
+            throughput["User Story"].resample("W-Mon").sum(),
+        ).reset_index()
+        figure_source = ColumnDataSource(throughput_per_week)
         throughput_figure.renderers = []
-        throughput_figure.line("Date", "Story", source=figure_source)
+        throughput_figure.line("Date", "User Story", source=figure_source)
 
     def select_team_member(attr, old, new):
         global selected_members
@@ -231,10 +243,28 @@ def forecast_work(doc):
     input_access_token.on_change("value", set_access_token)
     query_button = Button(label="Query Work Items")
     query_button.on_click(query_work_items)
-    input_customize_query = TextAreaInput(placeholder="Query", value=query, height=400)
+    input_customize_query = TextAreaInput(placeholder="Query", value=query, height=80)
     input_customize_query.on_change("value", set_query)
+    columns = [
+        TableColumn(
+            field="ClosedDate",
+            title="Closed Date",
+        ),
+        TableColumn(field="ClosedBy", title="Closed By"),
+    ]
+    input_data_table = DataTable(
+        height=500,
+        autosize_mode="force_fit",
+        source=table_data,
+        columns=columns,
+        sizing_mode="stretch_width",
+    )
     input_data_layout = Column(
-        input_ado_url, input_access_token, input_customize_query, query_button
+        input_ado_url,
+        input_access_token,
+        input_customize_query,
+        query_button,
+        input_data_table,
     )
 
     forecast_type_selection = RadioGroup(
