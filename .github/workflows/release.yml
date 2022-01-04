@@ -6,7 +6,36 @@ on:
       - main
 
 jobs:
-  build:
+  package_exec_for_windows:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          pip install -r requirements.txt
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Create Executable
+        run: |
+          pyinstaller --add-data="README.md:." --clean --distpath="dist" --name="Agile Forecasting.exe" --onefile ./src/app.py
+      - name: Upload executable
+        uses: actions/upload-artifact@v2
+        with:
+          name: Release Candidate Executable for Windows
+          path: "dist/Agile Forecasting.exe"
+
+  package_exec_for_linux:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +48,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install -r requirements.txt
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
@@ -38,5 +67,5 @@ jobs:
       - name: Upload executable
         uses: actions/upload-artifact@v2
         with:
-          name: Release Candidate Executable
+          name: Release Candidate Executable for Linux
           path: "dist/Agile Forecasting.exe"
