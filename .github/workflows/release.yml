@@ -31,8 +31,8 @@ jobs:
           workflow_conclusion: success
           path: dist
           repo: ${{ github.repository }}
-          check_artifacts: false
-          search_artifacts: false
+          check_artifacts: true
+          search_artifacts: true
       - name: Upload Windows artifact
         uses: actions/upload-release-asset@v1
         env:
