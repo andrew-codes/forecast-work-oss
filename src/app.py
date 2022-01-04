@@ -1,7 +1,7 @@
 import datetime
 import base64
 import json
-from os import access, environ
+from os import getenv
 import requests
 from dotenv import load_dotenv
 from glom import glom
@@ -191,9 +191,9 @@ def select_team_member(attr, old, new):
     global selected_members
     selected_members = new
 
-query=environ["DEFAULT_QUERY"]
-ado_url = environ["ADO_URL"]
-access_token = environ["ACCESS_TOKEN"]
+query = getenv("DEFAULT_QUERY") or ""
+ado_url = getenv("ADO_URL") or ""
+access_token = getenv("ACCESS_TOKEN") or ""
 historical_input_data = None
 all_members = []
 selected_members = []
