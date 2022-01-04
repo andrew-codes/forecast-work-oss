@@ -7,9 +7,15 @@
     "url": "'https://andrew.codes"
   },
   "scripts": {
-    "start": "nodemon src/app.py"
+    "start": "nodemon -L src/app.py"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
+  },
+  "nodemonConfig": {
+    "verbose": true,
+    "execMap": {
+      "py": "bokeh serve"
+    }
   }
 }

@@ -16,6 +16,7 @@
   },
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
+    "humao.rest-client",
     "ms-python.python",
     "ms-toolsai.jupyter",
     "ms-toolsai.jupyter-renderers",
@@ -24,8 +25,8 @@
   ],
 
   "mounts": [
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
-    "source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind"
+    "source=${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
+    "source=${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind"
   ],
   "postCreateCommand": "pip3 install -r requirements.txt && jupyter serverextension enable --py jupyterlab && yarn",
   "shutdownAction": "none"

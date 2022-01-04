@@ -5,3 +5,5 @@
 Forecast-When.html
 Forecast-How_Many.html
 node_modules
+*.http
+*.env
