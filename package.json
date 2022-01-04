@@ -7,7 +7,7 @@
     "url": "'https://andrew.codes"
   },
   "scripts": {
-    "start": "nodemon -L src/app.py"
+    "start": "nodemon -L src/forecast-work.py"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
