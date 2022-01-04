@@ -29,7 +29,6 @@ jobs:
           github_token: ${{ github.token }}
           workflow: on-commit-to-main.yml
           workflow_conclusion: success
-          commit: ${{ github.event.tag.head.sha }}
           path: dist
           repo: ${{ github.repository }}
           check_artifacts: false
