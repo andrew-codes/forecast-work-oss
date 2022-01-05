@@ -1,4 +1,4 @@
-name: Package for Release
+name: Create Development Release
 
 on:
   push:
@@ -58,3 +58,71 @@ jobs:
         with:
           name: Release Candidate Executable for ${{ matrix.os }}
           path: "dist/${{ matrix.os}}/${{ matrix.file_name }}"
+
+  release:
+    name: Create development release
+    runs-on: ubuntu-latest
+    needs: package_executable
+    steps:
+      - name: Use Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "2.6"
+      - name: Install changelog generator
+        run: |
+          gem install github_changelog_generator
+      - name: Checkout for changelog generation
+        uses: actions/checkout@v2
+      - name: Generate changelog
+        env:
+          CHANGELOG_GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          IFS='/' read -ra REPO_PARTS <<< "$GITHUB_REPOSITORY"
+          github_changelog_generator -u $REPO_PARTS[0] -p $REPO_PARTS[1]
+      - name: Create GitHub release
+        uses: actions/create-release@v1
+        id: create_release
+        with:
+          draft: false
+          prerelease: true
+          release_name: ${{ steps.version.outputs.version }}-dev
+          tag_name: ${{ github.ref }}
+          body_path: CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Download artifacts from packaging workflow
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ github.token }}
+          workflow: on-commit-to-main.yml
+          workflow_conclusion: success
+          commit: ${{ github.ref }}
+          branch: main
+          path: dist
+      - name: Upload Windows artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/windows-latest/Agile_Forecasting.exe
+          asset_name: Agile_Forecasting_for_Windows.exe
+          asset_content_type: application/octet-stream
+      - name: Upload Linux artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/ubuntu-latest/Agile_Forecasting
+          asset_name: Agile_Forecasting_for_Linux
+          asset_content_type: application/octet-stream
+      - name: Upload MacOS artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/macos-latest/Agile_Forecasting
+          asset_name: Agile_Forecasting_for_MacOS
+          asset_content_type: application/octet-stream
