@@ -99,15 +99,14 @@ jobs:
           body_path: CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{ github.token }}
-
       - uses: actions/download-artifact@master
         with:
           name: Release Candidate Executable for Windows
-          path: "dist/Agile Forecasting.exe"
+          path: dist
       - uses: actions/download-artifact@master
         with:
           name: Release Candidate Executable for Linux
-          path: "dist/Agile Forecasting"
+          path: dist
       - name: Upload Windows artifact
         uses: actions/upload-release-asset@v1
         env:
