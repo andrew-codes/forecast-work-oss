@@ -91,7 +91,7 @@ jobs:
           CHANGELOG_GITHUB_TOKEN: ${{ github.token }}
         run: |
           IFS='/' read -ra REPO_PARTS <<< "$GITHUB_REPOSITORY"
-          github_changelog_generator -u $REPO_PARTS[0] -p $REPO_PARTS[1]
+          github_changelog_generator -u ${REPO_PARTS[0]} -p ${REPO_PARTS[1]}
       - name: Upload changelog
         uses: actions/upload-artifact@v2
         with:
