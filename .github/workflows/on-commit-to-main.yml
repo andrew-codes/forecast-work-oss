@@ -27,15 +27,16 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
   package_executable:
+    name: Create executable for application
     strategy:
       matrix:
         include:
           - os: ubuntu-latest
-            file_name: Agile_Forecasting
+            file_name: Agile-Forecasting
           - os: macos-latest
-            file_name: Agile_Forecasting
+            file_name: Agile-Forecasting
           - os: windows-latest
-            file_name: Agile_Forecasting.exe
+            file_name: Agile-Forecasting.exe
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     needs: lint
@@ -70,97 +71,5 @@ jobs:
       - name: Upload executable
         uses: actions/upload-artifact@v2
         with:
-          name: Release Candidate Executable for ${{ matrix.os }}
+          name: ${{ matrix.os }}_${{ matrix.file_name }}
           path: "dist/${{ matrix.os}}/${{ matrix.file_name }}"
-
-  change_log:
-    runs-on: ubuntu-latest
-    name: Generate Changelog
-    steps:
-      - name: Use Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.1"
-      - name: Install changelog generator
-        run: |
-          gem install github_changelog_generator
-      - name: Checkout for changelog generation
-        uses: actions/checkout@v2
-      - name: Generate changelog
-        env:
-          CHANGELOG_GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          IFS='/' read -ra REPO_PARTS <<< "$GITHUB_REPOSITORY"
-          github_changelog_generator -u ${REPO_PARTS[0]} -p ${REPO_PARTS[1]}
-      - name: Upload changelog
-        uses: actions/upload-artifact@v2
-        with:
-          name: CHANGELOG
-          path: CHANGELOG.md
-
-  release:
-    runs-on: ubuntu-latest
-    needs: [package_executable, change_log]
-    steps:
-      - name: Use Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.1"
-      - name: Install changelog generator
-        run: |
-          gem install github_changelog_generator
-      - name: Checkout for changelog generation
-        uses: actions/checkout@v2
-      - name: Generate changelog
-        env:
-          CHANGELOG_GITHUB_TOKEN: ${{ github.token }}
-        run: |
-          IFS='/' read -ra REPO_INFO <<< "$GITHUB_REPOSITORY"
-          github_changelog_generator -u ${REPO_INFO[0]} -p ${REPO_INFO[1]}
-      - name: Download artifacts from packaging workflow
-        uses: dawidd6/action-download-artifact@v2
-        with:
-          github_token: ${{ github.token }}
-          workflow: on-commit-to-main.yml
-          workflow_conclusion: success
-          commit: ${{ github.ref }}
-          branch: main
-          path: dist
-      - name: Create GitHub release
-        uses: actions/create-release@v1
-        id: create_release
-        with:
-          draft: false
-          prerelease: true
-          release_name: ${{ steps.version.outputs.version }}
-          tag_name: ${{ github.ref }}
-          body_path: dist/CHANGELOG.md
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: Upload Windows artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/windows-latest/Agile_Forecasting.exe
-          asset_name: Agile_Forecasting_for_Windows.exe
-          asset_content_type: application/octet-stream
-      - name: Upload Linux artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/ubuntu-latest/Agile_Forecasting
-          asset_name: Agile_Forecasting_for_Linux
-          asset_content_type: application/octet-stream
-      - name: Upload MacOS artifact
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/macos-latest/Agile_Forecasting
-          asset_name: Agile_Forecasting_for_MacOS
-          asset_content_type: application/octet-stream
