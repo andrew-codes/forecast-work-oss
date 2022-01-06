@@ -1,23 +1,25 @@
 import base64
-from datetime import date
 import json
+from datetime import date, datetime
 from functools import reduce
 from io import StringIO
 from os import getenv
-from bokeh.models.widgets.tables import DataTable, TableColumn
-from numpy import number
+
 import pandas as pd
 import requests
 import yaml
 from bokeh.models import Column, ColumnDataSource, HoverTool, MultiChoice, Row
+from bokeh.models.formatters import DatetimeTickFormatter
 from bokeh.models.widgets.buttons import Button
 from bokeh.models.widgets.groups import RadioGroup
 from bokeh.models.widgets.inputs import (
+    DatePicker,
     NumericInput,
     PasswordInput,
     TextAreaInput,
     TextInput,
 )
+from bokeh.models.widgets.tables import DataTable, TableColumn
 from bokeh.plotting import figure
 from bokeh.themes import Theme
 from dotenv import load_dotenv
@@ -40,6 +42,7 @@ simulation_days = 0
 last_days = 0
 simulation_start_date = date.today()
 number_of_simulation_items = 0
+millseconds_in_a_day = 86400000
 
 
 def forecast_work(doc):
@@ -50,6 +53,14 @@ def forecast_work(doc):
     def set_ado_url(attr, old, new):
         global ado_url
         ado_url = new
+
+    def set_simulation_start_date(attr, old, new):
+        global simulation_start_date
+        simulation_start_date = datetime.strptime(new, "%Y-%m-%d").date()
+
+    def set_number_of_simulation_items(attr, old, new):
+        global number_of_simulation_items
+        number_of_simulation_items = new
 
     def set_access_token(attr, old, new):
         global access_token
@@ -159,6 +170,8 @@ def forecast_work(doc):
         report_type = new
         clear_charts()
         simulation_days_input.visible = report_type == 0
+        simulation_start_date_input.visible = report_type == 1
+        simulation_number_of_items_input.visible = report_type == 1
 
     def set_last_days(attr, old, new):
         global last_days
@@ -179,11 +192,13 @@ def forecast_work(doc):
             return
 
     def sample_when_fn(dataset):
+        global number_of_simulation_items
+
         def simulate_days(data, scope):
             days = 0
             total = 0
             while total <= scope:
-                total += dataset.sample(n=1).iloc[0].Throughput
+                total += dataset.sample(n=1).iloc[0]["User Story"]
                 days += 1
             completion_date = simulation_start_date + pd.Timedelta(days, unit="d")
             return completion_date
@@ -213,11 +228,13 @@ def forecast_work(doc):
             if report_type == 0
             else compute_distribution(sample_when_fn, throughput, "Date")
         )
+        group_by = "Items" if report_type == 0 else "Date"
         render_throughput(throughput)
-        render_distribution(distribution)
+        render_distribution(distribution, group_by)
         render_forecast(distribution)
 
     def render_forecast(distribution):
+        global number_of_simulation_items
         if report_type == 0:
             distribution = distribution.sort_index(ascending=False)
             distribution["Probability"] = (
@@ -227,10 +244,27 @@ def forecast_work(doc):
                 distribution["Items"], top=distribution["Probability"], width=0.5
             )
             forecast_how_many_figure.visible = True
+        else:
+            forecast_when_figure.plot.title = f"Probabilities of Completion Dates for {number_of_simulation_items} Items"
+            distribution = distribution.sort_index(ascending=True)
+            distribution["Probability"] = (
+                100 * distribution.Frequency.cumsum() / distribution.Frequency.sum()
+            )
+            forecast_when_figure.plot.xaxis.formatter = DatetimeTickFormatter()
+            forecast_when_figure.vbar(
+                distribution["Date"],
+                top=distribution["Probability"],
+                width=millseconds_in_a_day,
+            )
+            forecast_when_figure.visible = True
 
-    def render_distribution(distribution):
+    def render_distribution(distribution, group_by):
+        width = 0.5 if report_type == 0 else millseconds_in_a_day
+        distribution_figure.plot.xaxis.axis_label = (
+            "Count" if report_type == 0 else "Date"
+        )
         distribution_figure.vbar(
-            distribution["Items"], top=distribution["Frequency"], width=0.5
+            distribution[group_by], top=distribution["Frequency"], width=width
         )
 
     def compute_distribution(sample_fn, throughput, group_by):
@@ -281,15 +315,17 @@ def forecast_work(doc):
         global selected_members
         selected_members = new
 
-    input_ado_url = TextInput(placeholder="ADO URL", value=ado_url)
+    input_ado_url = TextInput(title="ADO API URL", value=ado_url)
     input_ado_url.on_change("value", set_ado_url)
     input_access_token = PasswordInput(
-        placeholder="Access Token with workitem.read scope", value=access_token
+        title="ADO Access Token; with work item read scope", value=access_token
     )
     input_access_token.on_change("value", set_access_token)
     query_button = Button(label="Query Work Items")
     query_button.on_click(query_work_items)
-    input_customize_query = TextAreaInput(placeholder="Query", value=query, height=80)
+    input_customize_query = TextAreaInput(
+        title="WiQL Query; for quering work item input data", value=query, height=80
+    )
     input_customize_query.on_change("value", set_query)
     columns = [
         TableColumn(
@@ -315,16 +351,30 @@ def forecast_work(doc):
     )
 
     forecast_type_selection = RadioGroup(
-        labels=["How Many Items in Time Frame", "When will N items be completed"]
+        labels=[
+            "How many predicted items can fit in a time frame?",
+            "When are N items predicated to be completed?",
+        ],
     )
     forecast_type_selection.on_change("active", set_forecast_type)
 
-    simulation_days_input = NumericInput(
-        visible=False, placeholder="Time frame in days"
-    )
+    simulation_days_input = NumericInput(title="Time frame in days", visible=False)
     simulation_days_input.on_change("value", set_simulation_days)
-    how_many_type_options = Row(simulation_days_input)
-    when_type_options = Row()
+    how_many_type_options = Column(simulation_days_input)
+
+    simulation_start_date_input = DatePicker(
+        title="Date to start forecasting from", visible=False
+    )
+    simulation_start_date_input.on_change("value", set_simulation_start_date)
+    simulation_number_of_items_input = NumericInput(
+        title="Number of work items to complete", visible=False
+    )
+    simulation_number_of_items_input.on_change("value", set_number_of_simulation_items)
+
+    when_type_options = Column(
+        simulation_start_date_input, simulation_number_of_items_input
+    )
+
     forecast_type_controls = Column(
         forecast_type_selection,
         how_many_type_options,
@@ -332,7 +382,7 @@ def forecast_work(doc):
     )
 
     team_member_multi_choice_selection = MultiChoice(
-        options=all_members, placeholder="Select Team Members"
+        options=all_members, title="Select Team Members"
     )
     team_member_multi_choice_selection.on_change("value", select_team_member)
     select_all_team_members_button = Button(label="Select All")
@@ -345,7 +395,9 @@ def forecast_work(doc):
     )
     team_member_selection_controls = Row(team_member_multi_choice_selection, buttons)
 
-    last_days_input = NumericInput(placeholder="Use the last N days of historical data")
+    last_days_input = NumericInput(
+        title="Number of days of historical data used by forecasting"
+    )
     last_days_input.on_change("value", set_last_days)
 
     run_button = Button(label="Run")
@@ -381,7 +433,6 @@ def forecast_work(doc):
     distribution_figure = figure(
         title="Monte Carlo Distribution",
         plot_height=400,
-        x_axis_label="Count",
         y_axis_label="Frequency",
     )
     distribution_hover_tools = HoverTool(
@@ -405,7 +456,7 @@ def forecast_work(doc):
     forecast_how_many_hover_tools = HoverTool(
         tooltips=[
             ("Items Completed", "@x{%0.000000f}"),
-            ("Confidence", "@top{%0.00f}"),
+            ("Confidence", "@top{%0.00f}%"),
         ],
         formatters={
             "@x": "printf",
@@ -415,7 +466,6 @@ def forecast_work(doc):
     forecast_how_many_figure.add_tools(forecast_how_many_hover_tools)
 
     forecast_when_figure = figure(
-        title=f"Probabilities of Completion Dates for {number_of_simulation_items} Items",
         plot_height=400,
         x_axis_label="Completion Date",
         y_axis_label="Confidence",
@@ -423,8 +473,8 @@ def forecast_work(doc):
     forecast_when_figure.visible = False
     forecast_when_hover_tools = HoverTool(
         tooltips=[
-            ("Completion Date", "@x{%0.000000f}"),
-            ("Confidence", "@top{%0.00f}"),
+            ("Completion Date", "@x{%m-%d-%Y}"),
+            ("Confidence", "@top{%0.00f}%"),
         ],
         formatters={
             "@x": "datetime",
@@ -448,6 +498,7 @@ def forecast_work(doc):
         ),
     )
 
+    doc.title = "Agile Forecasting"
     doc.add_root(layout)
     doc.theme = Theme(
         json=yaml.load(
