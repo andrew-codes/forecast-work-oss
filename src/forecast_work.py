@@ -312,6 +312,7 @@ def forecast_work(doc):
         throughput_figure.line("Date", "User Story", source=figure_source)
 
     def select_team_member(attr, old, new):
+        clear_charts()
         global selected_members
         selected_members = new
 
