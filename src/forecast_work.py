@@ -107,7 +107,7 @@ def forecast_work(doc):
         if access_token == "" or query == "" or ado_url == "":
             return
 
-        with open("src/.env", "w") as f:
+        with open(".env", "w") as f:
             f.write(f'ADO_URL="{ado_url}"\n')
             f.write(f'ACCESS_TOKEN="{access_token}"\n')
             f.write(f'DEFAULT_QUERY="{query}"\n')
