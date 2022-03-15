@@ -4,30 +4,34 @@
     "dockerfile": "Dockerfile",
     "context": ".."
   },
-  // Uncomment to use docker-compose
-  // "dockerComposeFile": "docker-compose.yml",
-  // "service": "dev",
-  // Set *default* container specific settings.json values on container create.
   "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash",
-    "python.pythonPath": "/usr/local/bin/python",
-    "python.linting.enabled": false,
-    "python.linting.pylintEnabled": false
+    "terminal.integrated.shell.linux": "/bin/bash"
   },
-  // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
+    "capaj.vscode-exports-autocomplete",
+    "christian-kohler.npm-intellisense",
+    "cmstead.js-codeformer",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "hbenl.vscode-test-explorer-liveshare",
+    "hbenl.vscode-test-explorer",
     "humao.rest-client",
+    "kisstkondoros.vscode-codemetrics",
     "ms-python.python",
-    "ms-toolsai.jupyter",
     "ms-toolsai.jupyter-renderers",
-    "yzhang.markdown-all-in-one",
-    "esbenp.prettier-vscode"
+    "ms-toolsai.jupyter",
+    "ms-vsliveshare.vsliveshare",
+    "pflannery.vscode-versionlens",
+    "streetsidesoftware.code-spell-checker",
+    "WallabyJs.wallaby-vscode",
+    "wix.vscode-import-cost",
+    "yzhang.markdown-all-in-one"
   ],
 
   "mounts": [
     "source=${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
     "source=${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind"
   ],
-  "postCreateCommand": "pip3 install -r requirements.txt && jupyter serverextension enable --py jupyterlab && yarn",
+  "postCreateCommand": "",
   "shutdownAction": "none"
 }

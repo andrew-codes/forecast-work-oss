@@ -4,7 +4,5 @@
     "MD025": {
       "front_matter_title": ""
     }
-  },
-  "python.defaultInterpreterPath": "/usr/local/bin/python",
-  "python.formatting.provider": "black"
+  }
 }

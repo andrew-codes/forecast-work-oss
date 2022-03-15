@@ -1,0 +1,35 @@
+{
+  "name": "@andrew-codes/ado-kanban-forecasting",
+  "version": "1.0.0",
+  "description": "Azure DevOps dashboard widget to forecast work items using the Monte Carlo method.",
+  "main": "index.js",
+  "repository": "git@github.com:andrew-codes/forecast-work.git",
+  "author": "Andrew Smith <andrewsmith@microsoft.com>",
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "node esbuild.js",
+    "clean": "rimraf dist",
+    "lint": "",
+    "package": "",
+    "prestart": "mkdir -p dist/lib && cp node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js dist/lib/",
+    "start": "node esbuild.serve.js -w",
+    "test/ci": "",
+    "test/e2e": "",
+    "test/e2e/ci": "",
+    "test/unit": ""
+  },
+  "dependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "vss-web-extension-sdk": "^5.141.0"
+  },
+  "devDependencies": {
+    "@craftamap/esbuild-plugin-html": "^0.3.2",
+    "@types/react": "^17.0.40",
+    "@types/react-dom": "^17.0.13",
+    "esbuild": "^0.14.27",
+    "rimraf": "^3.0.2"
+  }
+}
