@@ -18,7 +18,9 @@ const options = {
   metafile: true,
   outdir: outDir,
   banner: {
-    js: ` (() => new EventSource("/esbuild").onmessage = () => location.reload())();`,
+    js: ` (() => new EventSource("http://localhost:${port}/esbuild").onmessage = () => {
+      document.querySelector('#root').innerText = "Reload page to see latest changes."
+    })();`,
   },
   plugins: [
     htmlPlugin({

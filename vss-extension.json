@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "id": "ado-kanban-forecasting",
-  "version": "1.0.0",
-  "name": "ado-kanban-forecasting",
+  "version": "1.0.1",
+  "name": "Kanban Forecasting",
   "description": "Azure DevOps dashboard widget to forecast work items using the Monte Carlo method.",
   "publisher": "andrew-codes",
   "categories": ["Azure Boards"],
@@ -11,24 +11,41 @@
       "id": "Microsoft.VisualStudio.Services"
     }
   ],
-  "icons": {
-    "default": "img/logo.png"
-  },
+  "icons": {},
   "contributions": [
     {
-      "id": "HelloWorldWidget",
+      "id": "KanbanForecasting",
       "type": "ms.vss-dashboards-web.widget",
       "targets": ["ms.vss-dashboards-web.widget-catalog"],
       "properties": {
-        "name": "Hello World Widget",
-        "description": "My first widget",
-        "catalogIconUrl": "img/CatalogIcon.png",
+        "name": "Kanban Forecasting",
+        "description": "Azure DevOps dashboard widget to forecast work items using the Monte Carlo method.",
         "previewImageUrl": "img/preview.png",
-        "uri": "dist/kanban-forecasting.html",
+        "uri": "kanban-forecasting.html",
         "supportedSizes": [
           {
-            "rowSpan": 1,
+            "rowSpan": 3,
             "columnSpan": 2
+          },
+          {
+            "rowSpan": 3,
+            "columnSpan": 3
+          },
+          {
+            "rowSpan": 3,
+            "columnSpan": 4
+          },
+          {
+            "rowSpan": 4,
+            "columnSpan": 2
+          },
+          {
+            "rowSpan": 4,
+            "columnSpan": 3
+          },
+          {
+            "rowSpan": 4,
+            "columnSpan": 4
           }
         ],
         "supportedScopes": ["project_team"]
@@ -37,9 +54,8 @@
   ],
   "files": [
     {
-      "path": "node_modules/vss-web-extension-sdk/lib/VSS.SDK.min.js",
-      "addressable": true,
-      "packagePath": "lib"
+      "path": "dist/lib/VSS.SDK.min.js",
+      "addressable": true
     },
     {
       "path": "dist/kanban-forecasting.html",
@@ -50,7 +66,7 @@
       "addressable": true
     },
     {
-      "path": "dist/img",
+      "path": "img",
       "addressable": true
     }
   ],
