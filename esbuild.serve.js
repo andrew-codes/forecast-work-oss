@@ -11,7 +11,7 @@ const outDir = "dist"
 
 const options = {
   assetNames: "[name]",
-  entryPoints: ["src/kanban-forecasting.tsx"],
+  entryPoints: ["src/kanban-forecasting.tsx", "src/configuration.tsx"],
   bundle: true,
   sourcemap: true,
   target: "es2015",
@@ -28,6 +28,23 @@ const options = {
         {
           entryPoints: ["src/kanban-forecasting.tsx"],
           filename: "kanban-forecasting.html",
+          htmlTemplate: `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script defer src="lib/VSS.SDK.min.js"></script>
+</head>
+<body>
+  <div id="root">
+  </div>
+</body>
+</html>`,
+        },
+        {
+          entryPoints: ["src/configuration.tsx"],
+          filename: "configuration.html",
           htmlTemplate: `
 <!DOCTYPE html>
 <html lang="en">
