@@ -23,8 +23,7 @@ window.VSS.require(
 
     window.VSS.register("KanbanForecasting.Configuration", () => {
       return {
-        load: (widgetSettings) => {
-          console.log("here")
+        load: (widgetSettings, widgetConfigurationContext) => {
           const root = document.querySelector("#root")
           render(
             <ForecastingConfiguration
@@ -34,6 +33,11 @@ window.VSS.require(
                 configurationValues = merge({}, configurationValues, {
                   [field.fieldName]: field.value,
                 })
+                var eventName = WidgetHelpers.WidgetEvent.ConfigurationChange
+                var eventArgs = WidgetHelpers.WidgetEvent.Args({
+                  data: JSON.stringify(configurationValues),
+                })
+                widgetConfigurationContext.notify(eventName, eventArgs)
               }}
               projectId={projectId}
               widgetHelpers={WidgetHelpers}
@@ -48,9 +52,7 @@ window.VSS.require(
           const customSettings = {
             data: JSON.stringify(configurationValues),
           }
-          // const eventName = WidgetHelpers.WidgetEvent.ConfigurationChange
-          // const eventArgs = WidgetHelpers.WidgetEvent.Args(customSettings)
-          // widgetConfigurationContext.notify(eventName, eventArgs)
+
           return WidgetHelpers.WidgetConfigurationSave.Valid(customSettings)
         },
       }

@@ -2,6 +2,10 @@ import * as React from "react"
 import { DefaultButton, Stack, TextField } from "@fluentui/react"
 import { CommonMethods2_1To5 } from "TFS/WorkItemTracking/RestClient"
 
+const defaultConfiguration = {
+  query: "",
+}
+
 const ForecastingConfiguration: React.FC<{
   apiClient: CommonMethods2_1To5
   onChange: (
@@ -17,8 +21,13 @@ const ForecastingConfiguration: React.FC<{
   }
   widgetSettings: any
 }> = ({ apiClient, onChange, projectId, widgetHelpers, widgetSettings }) => {
-  const [query, setQuery] = React.useState("")
+  const configuration = JSON.parse(
+    widgetSettings.customSettings?.data ?? defaultConfiguration,
+  )
+
+  const [query, setQuery] = React.useState(configuration.query)
   const handleSetQuery = React.useCallback((evt, newValue) => {
+    onChange(evt, { fieldName: "query", value: newValue })
     setQuery(newValue)
   }, [])
 
@@ -27,7 +36,6 @@ const ForecastingConfiguration: React.FC<{
     (evt) => {
       apiClient.queryByWiql({ query }, projectId).then(
         (workItems) => {
-          onChange(evt, { fieldName: workItems, value: workItems })
           setWorkItems(workItems.workItems)
         },
         (error) => {
@@ -43,14 +51,16 @@ const ForecastingConfiguration: React.FC<{
     ],
   )
 
+  console.log("work items", workItems)
+
   return (
     <Stack tokens={{ childrenGap: 15 }}>
       <TextField
         multiline
         required
-        defaultValue="query"
+        defaultValue={query}
         label="Query"
-        rows={5}
+        rows={3}
         onChange={handleSetQuery}
       />
       <DefaultButton
