@@ -28,7 +28,7 @@ from glom import glom
 load_dotenv()
 query = (
     getenv("DEFAULT_QUERY")
-    or "Select [System.Id] From WorkItems Where [System.WorkItemType] = 'User Story' AND [State] = 'Closed'"
+    or "Select [System.Id] From WorkItems Where [System.WorkItemType] in ('User Story','Bug') AND [State] = 'Closed'"
 )
 ado_url = getenv("ADO_URL") or ""
 access_token = getenv("ACCESS_TOKEN") or ""
