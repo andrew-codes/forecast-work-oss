@@ -18,4 +18,3 @@ Predict a team or subset of your team's ability to complete user stories by usin
 1. Open the repo's root in VS Code.
 2. `Ctrl + Shift + P`, type and select `Remote Containers: Rebuild and Reopen in Container`
    > This will build the dev container and re-open VS Code with it. The dev container contains all the required software for local development.
-3. In the VS Code terminal, run `yarn start` and navigate in your browser to [http://localhost:8080](http://localhost:8080).

@@ -1,5 +1,5 @@
 {
-  "name": "Python 3.8",
+  "name": "Electron",
   "build": {
     "dockerfile": "Dockerfile",
     "context": ".."
@@ -13,11 +13,11 @@
     "cmstead.js-codeformer",
     "eamodio.gitlens",
     "esbenp.prettier-vscode",
-    "hbenl.vscode-test-explorer-liveshare",
     "hbenl.vscode-test-explorer",
+    "hbenl.vscode-test-explorer-liveshare",
     "humao.rest-client",
+    "kavod-io.vscode-jest-test-adapter",
     "kisstkondoros.vscode-codemetrics",
-    "ms-python.python",
     "ms-toolsai.jupyter-renderers",
     "ms-toolsai.jupyter",
     "ms-vsliveshare.vsliveshare",
@@ -32,6 +32,10 @@
     "source=${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
     "source=${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind"
   ],
+  "containerEnv": {
+    "DISPLAY": "host.docker.internal:0.0",
+    "LIBGL_ALWAYS_INDIRECT": "0"
+  },
   "postCreateCommand": "",
   "shutdownAction": "none"
 }

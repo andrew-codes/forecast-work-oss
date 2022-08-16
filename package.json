@@ -1,22 +1,23 @@
 {
-  "name": "@andrew-codes/ado-kanban-forecasting",
+  "name": "@andrew-codes/ado-forecasting",
   "version": "1.0.0",
-  "description": "Azure DevOps dashboard widget to forecast work items using the Monte Carlo method.",
-  "main": "index.js",
+  "description": "Forecast ADO work items using your team's historical throughput and the Monte Carlo method.",
+  "main": "dist/main.js",
   "repository": "git@github.com:andrew-codes/forecast-work.git",
-  "author": "Andrew Smith <andrewsmith@microsoft.com>",
+  "author": "Andrew Smith <andrew@andrew.codes>",
   "license": "MIT",
-  "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
-    "build": "node esbuild.js",
+    "prestart": "yarn clean",
+    "start": "concurrently \"npm:start/*\"",
+    "start/esbuild": "cross-env NODE_ENV=\"development\" ts-node esbuild.ts",
+    "start/electron": "wait-on dist/index.html dist/main.js && cross-env NODE_ENV=\"development\" electron . --no-sandbox",
     "clean": "rimraf dist",
+    "build": "cross-env NODE_ENV=\"production\" ts-node esbuild.ts",
     "lint": "",
-    "package": "",
-    "prestart": "./scripts/prestart.sh",
-    "presetup": "node esbuild.js",
-    "setup": "./scripts/create-for-local-dev.sh",
-    "start": "node esbuild.serve.js -w",
     "test/ci": "",
     "test/e2e": "",
     "test/e2e/ci": "",
@@ -27,15 +28,23 @@
     "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "styled-components": "^5.3.3",
-    "vss-web-extension-sdk": "^5.141.0"
+    "styled-components": "^5.3.3"
   },
   "devDependencies": {
     "@craftamap/esbuild-plugin-html": "^0.3.2",
-    "@types/react": "^17.0.40",
-    "@types/react-dom": "^17.0.13",
-    "esbuild": "^0.14.27",
+    "@types/node": "^18.7.1",
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "concurrently": "^7.3.0",
+    "cross-env": "^7.0.3",
+    "electron": "^20.0.2",
+    "electron-builder": "^23.3.3",
+    "electron-reload": "^2.0.0-alpha.1",
+    "electron-search-devtools": "^1.8.6",
+    "esbuild": "^0.15.3",
     "rimraf": "^3.0.2",
-    "tfx-cli": "^0.11.0"
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4",
+    "wait-on": "^6.0.1"
   }
 }
