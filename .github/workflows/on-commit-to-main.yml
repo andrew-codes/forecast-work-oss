@@ -48,9 +48,6 @@ jobs:
       - name: Build
         run: yarn build
       - name: Package Extension
-        run: yarn package
-      - name: Upload executable
-        uses: actions/upload-artifact@v2
-        with:
-          name: Kanban_Forecasting.vsix
-          path: "packaged/Kanban_Forecasting.vsix"
+        run: yarn release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
