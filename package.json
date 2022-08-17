@@ -24,6 +24,8 @@
     "test/unit": ""
   },
   "dependencies": {
+    "@atlaskit/page-layout": "^1.2.7",
+    "@atlaskit/side-navigation": "^1.2.12",
     "@fluentui/react": "^8.61.2",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
