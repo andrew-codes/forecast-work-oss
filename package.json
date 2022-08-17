@@ -17,11 +17,11 @@
     "build": "cross-env NODE_ENV=\"production\" electron-esbuild build",
     "release": "electron-builder --onTagOrDraft",
     "clean": "rimraf dist",
-    "lint": "",
-    "test/ci": "",
-    "test/e2e": "",
-    "test/e2e/ci": "",
-    "test/unit": ""
+    "lint": "exit 0",
+    "test/ci": "exit 0",
+    "test/e2e": "exit 0",
+    "test/e2e/ci": "exit 0",
+    "test/unit": "exit 0"
   },
   "dependencies": {
     "@atlaskit/page-layout": "^1.2.7",
