@@ -29,8 +29,8 @@ jobs:
       - name: Test
         run: yarn test/ci
 
-  package_executable:
-    name: Create executable for application
+  package:
+    name: Package application
     runs-on: ubuntu-latest
     needs: lint_and_test
     steps:
