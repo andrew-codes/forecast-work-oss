@@ -3,7 +3,7 @@ import styled from "styled-components"
 import type { FormFieldComponentProps } from "../Form"
 import { ValidityType } from "../Form"
 
-const Input = styled.input`
+const Input = styled.input<{ borderColor: string }>`
   border: 1px solid ${({ borderColor }) => borderColor};
   width: 100%;
   box-sizing: border-box;

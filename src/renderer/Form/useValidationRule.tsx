@@ -35,9 +35,9 @@ const useValidationRule = (
   return rule
 }
 
-export {
+export default useValidationRule
+export type {
   ChangeType,
-  useValidationRule,
   ValidateType,
   ValidationOutputType,
   ValidationRuleType,

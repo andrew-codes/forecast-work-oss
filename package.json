@@ -12,11 +12,9 @@
   },
   "scripts": {
     "prestart": "yarn clean",
-    "start": "concurrently \"npm:start/*\"",
-    "start/esbuild": "cross-env NODE_ENV=\"development\" ts-node esbuild.ts",
-    "start/electron": "wait-on dist/index.html dist/main.js && cross-env NODE_ENV=\"development\" electron . --no-sandbox",
+    "start": "electron-esbuild dev",
+    "build": "cross-env NODE_ENV=\"production\" electron-esbuild build",
     "clean": "rimraf dist",
-    "build": "cross-env NODE_ENV=\"production\" ts-node esbuild.ts",
     "lint": "",
     "test/ci": "",
     "test/e2e": "",
@@ -27,26 +25,67 @@
     "@atlaskit/page-layout": "^1.2.7",
     "@atlaskit/side-navigation": "^1.2.12",
     "@fluentui/react": "^8.61.2",
+    "fast-csv": "^4.3.6",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
-    "@craftamap/esbuild-plugin-html": "^0.3.2",
+    "@types/lodash": "^4.14.183",
     "@types/node": "^18.7.1",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
-    "concurrently": "^7.3.0",
+    "@types/styled-components": "^5.1.26",
     "cross-env": "^7.0.3",
     "electron": "^20.0.2",
     "electron-builder": "^23.3.3",
-    "electron-reload": "^2.0.0-alpha.1",
+    "electron-esbuild": "^6.0.0",
     "electron-search-devtools": "^1.8.6",
+    "electron-util": "0.17.0",
     "esbuild": "^0.15.3",
     "rimraf": "^3.0.2",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.7.4",
-    "wait-on": "^6.0.1"
+    "typescript": "~4.6.3"
+  },
+  "build": {
+    "appId": "codes.andrew.forecasting",
+    "productName": "Work Item Forecasting",
+    "extraMetadata": {
+      "name": "Work Item Forecasting",
+      "main": "main.js"
+    },
+    "files": [
+      {
+        "from": ".",
+        "filter": [
+          "package.json"
+        ]
+      },
+      {
+        "from": "dist/main"
+      },
+      {
+        "from": "dist/renderer"
+      }
+    ],
+    "win": {
+      "target": [
+        "zip"
+      ]
+    },
+    "mac": {
+      "target": [
+        "zip"
+      ]
+    },
+    "linux": {
+      "target": [
+        "zip"
+      ]
+    },
+    "directories": {
+      "buildResources": "resources"
+    },
+    "publish": null
   }
 }

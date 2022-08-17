@@ -1,17 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "esModuleInterop": true,
-    "moduleResolution": "Node",
-    "types": ["node", "electron"],
-    "lib": ["DOM", "ESNext"],
-    "strict": true,
-    "jsx": "react"
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS"
-    }
+    "jsx": "react",
+    "target": "es2015",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "baseUrl": "./"
   }
 }
