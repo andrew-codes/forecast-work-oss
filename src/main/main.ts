@@ -80,6 +80,10 @@ async function createWindow() {
     win!.show()
     win!.focus()
 
+    if (!isDev) {
+      win!.removeMenu()
+    }
+
     if (isDev) {
       searchDevtools("REACT").then((devtools) => {
         session.defaultSession.loadExtension(devtools, {
