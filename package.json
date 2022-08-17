@@ -2,10 +2,10 @@
   "name": "@andrew-codes/ado-forecasting",
   "version": "2.0.0",
   "description": "Forecast ADO work items using your team's historical throughput and the Monte Carlo method.",
-  "main": "dist/main.js",
+  "main": "dist/main/main.js",
   "repository": "git@github.com:andrew-codes/forecast-work.git",
   "author": "Andrew Smith <andrew@andrew.codes>",
-  "license": "MIT",
+  "license": "LICENSE",
   "private": true,
   "engines": {
     "node": ">=16.0.0"
@@ -15,8 +15,9 @@
     "start": "electron-esbuild dev",
     "prebuild": "yarn clean",
     "build": "cross-env NODE_ENV=\"production\" electron-esbuild build",
-    "release": "electron-builder build --windows portable --linux deb apk --publish onTagOrDraft",
+    "release/linux": "electron-builder build --linux deb apk --publish onTagOrDraft",
     "release/osx": "electron-builder build --macos dmg --publish onTagOrDraft",
+    "release/windows": "electron-builder build --windows portable nsis --publish onTagOrDraft",
     "clean": "rimraf dist",
     "lint": "exit 0",
     "test/ci": "exit 0",
@@ -55,7 +56,7 @@
     "productName": "Work Item Forecasting",
     "extraMetadata": {
       "name": "Work Item Forecasting",
-      "main": "main.js"
+      "main": "dist/main/main.js"
     },
     "files": [
       {
@@ -70,7 +71,8 @@
       },
       {
         "from": "dist/renderer"
-      }
+      },
+      "dist/"
     ],
     "win": {
       "target": [
