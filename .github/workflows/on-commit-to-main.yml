@@ -69,7 +69,7 @@ jobs:
           path: "node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
       - name: Install dependencies
-        run: yarn
+        run: yarn add electron-builder
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
@@ -96,7 +96,7 @@ jobs:
           path: "node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
       - name: Install dependencies
-        run: yarn
+        run: yarn add electron-builder
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
@@ -123,9 +123,7 @@ jobs:
           path: "node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
       - name: Install dependencies
-        run: yarn
-      - name: Install dmg-license
-        run: yarn add --dev dmg-license
+        run: yarn add electron-builder dmg-license
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
