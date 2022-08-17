@@ -74,7 +74,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: .
-      - name: Package Extension
+      - name: Package and publish application
         run: yarn release/windows
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -101,7 +101,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: .
-      - name: Package Extension
+      - name: Package and publish application
         run: yarn release/linux
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -128,7 +128,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           path: .
-      - name: Package Extension
+      - name: Package and publish application
         run: yarn release/osx
         env:
           GITHUB_TOKEN: ${{ github.token }}
