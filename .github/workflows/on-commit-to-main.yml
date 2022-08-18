@@ -1,25 +1,16 @@
 name: Test and publish apps for release
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
 jobs:
   lint_and_test:
-    name: Lint and Test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ./.github/workflows/shared/lint-and-test.yml
+    uses: andrew-codes/forecast-work/.github/workflows/lint-and-test.yml@main
   
   build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ./.github/workflows/shared/build-and-package-apps.yml
+    uses: andrew-codes/forecast-work/.github/workflows/build-and-package-apps.yml@main
 
   publish:
-    name: Publish
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ./.github/workflows/shared/publish-apps.yml
+    uses: andrew-codes/forecast-work/.github/workflows/publish-apps.yml@main
