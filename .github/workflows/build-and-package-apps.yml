@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: forecasting_windows
-          path: dist
+          path: dist/*.exe
 
   package_linux:
     name: Package application (Linux)
@@ -84,7 +84,12 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: forecasting_linux
-          path: dist
+          path: dist/*.deb
+      - name: Upload Linux app
+        uses: actions/upload-artifact@v2
+        with:
+          name: forecasting_linux
+          path: dist/*.apk
 
   package_osx:
     name: Package application (OSX)
@@ -114,4 +119,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: forecasting_osx
-          path: dist
+          path: dist/*.dmg
