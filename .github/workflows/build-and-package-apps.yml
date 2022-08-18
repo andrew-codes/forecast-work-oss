@@ -108,9 +108,9 @@ jobs:
           path: .
       - name: Package and publish application
         run: yarn release/osx
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Upload OSX app
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
         uses: actions/upload-artifact@v2
         with:
           name: forecasting_osx
