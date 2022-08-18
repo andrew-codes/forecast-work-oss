@@ -1,9 +1,6 @@
-name: Create Development Release
+name: Test and publish apps for release
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -13,122 +10,16 @@ jobs:
     name: Lint and Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-      - uses: actions/cache@v2
-        with:
-          path: "node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
-      - name: Install dependencies
-        run: yarn
-      - name: Lint
-        run: yarn lint
-      - name: Test
-        run: yarn test/ci
+      - uses: ./.github/workflows/shared/lint-and-test.yml
   
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-      - uses: actions/cache@v2
-        with:
-          path: "node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
-      - name: Install dependencies
-        run: yarn
-      - name: Build
-        run: yarn build
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: dist
+      - uses: ./.github/workflows/shared/build-and-package-apps.yml
 
-  package_windows:
-    name: Package application (Windows)
-    runs-on: windows-latest
-    needs:
-      - lint_and_test
-      - build
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-      - uses: actions/cache@v2
-        with:
-          path: "node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
-      - name: Install dependencies
-        run: yarn
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: .
-      - name: Package and publish application
-        run: yarn release/windows
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-  package_linux:
-    name: Package application (Linux)
+  publish:
+    name: Publish
     runs-on: ubuntu-latest
-    needs:
-    - lint_and_test
-    - build
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-      - uses: actions/cache@v2
-        with:
-          path: "node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
-      - name: Install dependencies
-        run: yarn
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: .
-      - name: Package and publish application
-        run: yarn release/linux
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-  package_osx:
-    name: Package application (OSX)
-    runs-on: macos-latest
-    needs:
-    - lint_and_test
-    - build
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-      - uses: actions/cache@v2
-        with:
-          path: "node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
-      - name: Install dependencies
-        run: yarn
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: .
-      - name: Package and publish application
-        run: yarn release/osx
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      - uses: ./.github/workflows/shared/publish-apps.yml
