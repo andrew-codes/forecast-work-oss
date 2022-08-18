@@ -58,7 +58,7 @@ jobs:
           echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       - name: Update release with release notes
         id: update_release
-        uses: tubone24/update_release@v1.0
+        uses: tubone24/update_release@v1.3.1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
