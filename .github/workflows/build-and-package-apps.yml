@@ -1,6 +1,11 @@
 name: Build and package apps
 on:
   workflow_call:
+    inputs:
+      publish_flag:
+        required: false
+        type: string
+        default: "--publish never"
 
 jobs:
   build:
@@ -47,7 +52,7 @@ jobs:
         with:
           path: .
       - name: Package and publish application
-        run: yarn release/windows
+        run: yarn release/windows ${{ inputs.publish_flag }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Windows app
@@ -77,7 +82,7 @@ jobs:
         with:
           path: .
       - name: Package and publish application
-        run: yarn release/linux
+        run: yarn release/linux ${{ inputs.publish_flag }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Linux app
@@ -112,7 +117,7 @@ jobs:
         with:
           path: .
       - name: Package and publish application
-        run: yarn release/osx
+        run: yarn release/osx ${{ inputs.publish_flag }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Upload OSX app

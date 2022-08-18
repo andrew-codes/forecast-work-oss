@@ -1,4 +1,4 @@
-name: Test and publish apps for release
+name: On Commit to Main
 
 on:
   push:
@@ -11,7 +11,5 @@ jobs:
   
   build:
     uses: andrew-codes/forecast-work/.github/workflows/build-and-package-apps.yml@main
-
-  publish:
-    needs: [build, lint_and_test]
-    uses: andrew-codes/forecast-work/.github/workflows/publish-apps.yml@main
+    with:
+      publish_flag: "--publish always"
