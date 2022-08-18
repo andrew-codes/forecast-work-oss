@@ -13,4 +13,5 @@ jobs:
     uses: andrew-codes/forecast-work/.github/workflows/build-and-package-apps.yml@main
 
   publish:
+    needs: [build]
     uses: andrew-codes/forecast-work/.github/workflows/publish-apps.yml@main
