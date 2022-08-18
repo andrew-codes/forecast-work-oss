@@ -1,0 +1,19 @@
+name: Test and publish apps for PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint_and_test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/shared/lint-and-test.yml
+  
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ./.github/workflows/shared/build-and-package-apps.yml
