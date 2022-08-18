@@ -1,0 +1,90 @@
+name: Publish apps
+on:
+  workflow_call:
+
+jobs:
+  generate_changelog:
+    runs-on: ubuntu-latest
+    name: Generate Changelog
+    steps:
+      - name: Use Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+      - name: Install changelog generator
+        run: |
+          gem install github_changelog_generator
+      - name: Checkout for changelog generation
+        uses: actions/checkout@v2
+      - name: Generate changelog
+        env:
+          CHANGELOG_GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          IFS='/' read -ra REPO_PARTS <<< "$GITHUB_REPOSITORY"
+          github_changelog_generator -u ${REPO_PARTS[0]} -p ${REPO_PARTS[1]}
+      - name: Upload changelog
+        uses: actions/upload-artifact@v2
+        with:
+          name: CHANGELOG.md
+          path: CHANGELOG.md
+
+  publish_release:
+    name: Publish release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: forecasting_windows
+          path: .
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: forecasting_linux
+          path: .
+      - name: Download OSX artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: forecasting_osx
+          path: .
+      - name: Download OSX artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: CHANGELOG.md
+          path: .
+      - name: get version
+        id: get_version
+        run: |
+          echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Update release with release notes
+        id: update_release
+        uses: tubone24/update_release@v1.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          body_path: CHANGELOG.md
+      - name: Upload Windows release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          upload_url: ${{ steps.update_release.outputs.upload_url }}
+          asset_path: forecasting_windows
+          asset_name: forecasting_windows-${{ steps.get_version.outputs.VERSION }}
+      - name: Upload Linux release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          upload_url: ${{ steps.update_release.outputs.upload_url }}
+          asset_path: forecasting_linux
+          asset_name: forecasting_linux-${{ steps.get_version.outputs.VERSION }}
+      - name: Upload OSX release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          upload_url: ${{ steps.update_release.outputs.upload_url }}
+          asset_path: forecasting_osx
+          asset_name: forecasting_osx-${{ steps.get_version.outputs.VERSION }}
+
