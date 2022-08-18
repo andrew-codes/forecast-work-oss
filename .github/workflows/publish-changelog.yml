@@ -1,0 +1,37 @@
+name: Publish changelog
+on:
+  workflow_call:
+
+jobs:
+  generate_changelog:
+    runs-on: ubuntu-latest
+    name: Generate Changelog
+    steps:
+      - name: Use Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.1"
+      - name: Install changelog generator
+        run: |
+          gem install github_changelog_generator
+      - name: Checkout for changelog generation
+        uses: actions/checkout@v2
+      - name: Generate changelog
+        env:
+          CHANGELOG_GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          IFS='/' read -ra REPO_PARTS <<< "$GITHUB_REPOSITORY"
+          github_changelog_generator -u ${REPO_PARTS[0]} -p ${REPO_PARTS[1]}
+      - name: Upload changelog
+        uses: actions/upload-artifact@v2
+        with:
+          name: CHANGELOG.md
+          path: CHANGELOG.md
+      - name: Update release with release notes
+        id: update_release
+        uses: tubone24/update_release@v1.3.1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          body_path: CHANGELOG.md
+

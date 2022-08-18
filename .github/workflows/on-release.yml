@@ -1,0 +1,10 @@
+name: On Release
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  publish_changelog:
+    uses: andrew-codes/forecast-work/.github/workflows/publish-changelog.yml@main

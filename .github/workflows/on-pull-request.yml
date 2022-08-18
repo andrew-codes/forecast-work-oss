@@ -1,7 +1,7 @@
-name: On Commit to Main
+name: On Pull Request
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -10,7 +10,4 @@ jobs:
     uses: andrew-codes/forecast-work/.github/workflows/lint-and-test.yml@main
   
   build:
-    needs: [lint_and_test]
     uses: andrew-codes/forecast-work/.github/workflows/build-and-package-apps.yml@main
-    with:
-      publish_flag: "--publish always"
