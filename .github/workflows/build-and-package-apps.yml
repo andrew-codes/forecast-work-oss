@@ -48,6 +48,8 @@ jobs:
           path: .
       - name: Package and publish application
         run: yarn release/windows
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Windows app
         uses: actions/upload-artifact@v2
         with:
@@ -76,6 +78,8 @@ jobs:
           path: .
       - name: Package and publish application
         run: yarn release/linux
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Linux app
         uses: actions/upload-artifact@v2
         with:
@@ -105,6 +109,8 @@ jobs:
       - name: Package and publish application
         run: yarn release/osx
       - name: Upload OSX app
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
         uses: actions/upload-artifact@v2
         with:
           name: forecasting_osx
