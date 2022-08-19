@@ -2,7 +2,7 @@
 
 ## Picking an Issue
 
-Features are tracked via [GitHub Issues](https://github.com/andrew-codes/forecast-work/issues). Feel free to pick any up that are not already assigned. If you aren't sure were to start, try looking at issues labeled as a "[good first issue](https://github.com/andrew-codes/forecast-work/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+)".
+Features are tracked via a [GitHub Issues Project](https://github.com/users/andrew-codes/projects/1/views/2). Feel free to pick any up that are not already assigned. If you aren't sure were to start, try looking at issues labeled as a "[good first issue](https://github.com/andrew-codes/forecast-work/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+)".
 
 ## Required Software for Development
 
