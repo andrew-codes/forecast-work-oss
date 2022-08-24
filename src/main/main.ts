@@ -1,6 +1,7 @@
-import { parseStream } from "fast-csv"
 import fs from "fs"
 import path from "path"
+
+import { parseStream } from "fast-csv"
 import { format } from "url"
 import { app, BrowserWindow, dialog, ipcMain, session } from "electron"
 import { is } from "electron-util"
@@ -40,7 +41,7 @@ async function createWindow() {
   ipcMain.handle("dialog", async (event, method, params) => {
     const { canceled, filePaths } = await dialog[method](params)
     if (canceled) {
-      throw new Error("Canceled")
+      return
     }
 
     const fileStream = fs.createReadStream(filePaths[0])
