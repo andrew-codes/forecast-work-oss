@@ -7,16 +7,16 @@ import React, {
   useState,
 } from "react"
 import { noop } from "lodash"
-import type { FormValuesType } from "./Form"
+import type { FieldsType } from "./Form"
 import FormsContext from "./FormsContext"
-import type { FormValueType } from "."
+import type { FieldType } from "."
 import { merge } from "@fluentui/react"
 
 type FormsProviderProps = { children: React.ReactNode }
 type RegisterFormType = (id: string) => void
-type GetFormValuesType = (id: string) => FormValuesType
-type SetValueType = (id: string, value: FormValueType) => void
-type SetValuesType = (id: string, values: FormValuesType) => void
+type GetFormValuesType = (id: string) => FieldsType
+type SetValueType = (id: string, value: FieldType) => void
+type SetValuesType = (id: string, values: FieldsType) => void
 type GetHandlers = (id: string) => {
   reset: EventHandler<SyntheticEvent>
   submit: EventHandler<SyntheticEvent>
@@ -32,17 +32,17 @@ type RegisterEventHandlers = (
 type RegisterAction = { type: "register"; payload: { id: string } }
 type SetOneAction = {
   type: "setOne"
-  payload: { id: string; value: FormValueType }
+  payload: { id: string; value: FieldType }
 }
 type SetAllAction = {
   type: "setAll"
-  payload: { id: string; values: FormValuesType }
+  payload: { id: string; values: FieldsType }
 }
 type Action = RegisterAction | SetOneAction | SetAllAction
 const reducer = (
-  state: Record<string, FormValuesType> = {},
+  state: Record<string, FieldsType> = {},
   action: Action,
-): Record<string, FormValuesType> => {
+): Record<string, FieldsType> => {
   switch (action.type) {
     case "register":
       return { ...state, [action.payload.id]: {} }
@@ -74,9 +74,12 @@ const FormsProvider: React.FC<FormsProviderProps> = ({ children }) => {
     >
   >({})
 
-  const registerForm = useCallback<RegisterFormType>((id) => {
-    dispatch({ type: "register", payload: { id } })
-  }, [])
+  const registerForm = useCallback<RegisterFormType>(
+    (id) => {
+      dispatch({ type: "register", payload: { id } })
+    },
+    [dispatch],
+  )
 
   const getValues = useCallback<GetFormValuesType>(
     (id) => {
@@ -84,24 +87,30 @@ const FormsProvider: React.FC<FormsProviderProps> = ({ children }) => {
     },
     [forms],
   )
-  const setValue = useCallback<SetValueType>((id, value) => {
-    dispatch({
-      type: "setOne",
-      payload: {
-        id,
-        value,
-      },
-    })
-  }, [])
-  const setValues = useCallback<SetValuesType>((id, values) => {
-    dispatch({
-      type: "setAll",
-      payload: {
-        id,
-        values,
-      },
-    })
-  }, [])
+  const setValue = useCallback<SetValueType>(
+    (id, value) => {
+      dispatch({
+        type: "setOne",
+        payload: {
+          id,
+          value,
+        },
+      })
+    },
+    [dispatch],
+  )
+  const setValues = useCallback<SetValuesType>(
+    (id, values) => {
+      dispatch({
+        type: "setAll",
+        payload: {
+          id,
+          values,
+        },
+      })
+    },
+    [dispatch],
+  )
 
   const getHandlers = useCallback<GetHandlers>(
     (id) => {

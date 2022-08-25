@@ -11,7 +11,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
 
   const validateRequired = useValidationRule(
     "Required",
-    (value, values) => !/^.+$/.test(value.value),
+    (field, fields) => !/^.+$/.test(field.value),
   )
 
   const handleSubmit = React.useCallback<(evt: React.SyntheticEvent) => void>(

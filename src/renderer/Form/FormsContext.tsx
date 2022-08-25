@@ -1,6 +1,6 @@
 import { createContext, EventHandler, SyntheticEvent } from "react"
 import { noop } from "lodash"
-import type { FormValueType, FormValuesType } from "."
+import type { FieldType, FieldsType } from "."
 
 type FormsContextType = {
   eventHandlers: Record<
@@ -10,12 +10,12 @@ type FormsContextType = {
       submit?: EventHandler<SyntheticEvent>
     }
   >
-  forms: Record<string, FormValuesType>
+  forms: Record<string, FieldsType>
   getHandlers: (id: string) => {
     reset: EventHandler<SyntheticEvent>
     submit: EventHandler<SyntheticEvent>
   }
-  getValues: (id: string) => FormValuesType
+  getValues: (id: string) => FieldsType
   registerEventHandlers: (
     id: string,
     handlers: {
@@ -24,8 +24,8 @@ type FormsContextType = {
     },
   ) => void
   registerForm: (id: string) => void
-  setValue: (id: string, value: FormValueType) => void
-  setValues: (id: string, values: FormValuesType) => void
+  setValue: (id: string, value: FieldType) => void
+  setValues: (id: string, values: FieldsType) => void
 }
 
 const FormsContext = createContext<FormsContextType>({
