@@ -40,7 +40,7 @@ type ThroughputResult = {
   date: Date
   count: number
 }
-const throughput = pipe(
+const getThroughput: (dates: Date[]) => Throughput = pipe(
   sortBy(identity),
   map((date: Date) => {
     const weekDayNumber = date.getDay()
@@ -78,4 +78,7 @@ const throughput = pipe(
   ),
 )
 
-export { getWorkItemClosedDates, throughput }
+type Throughput = { date: Date; count: number }[]
+
+export { getWorkItemClosedDates, getThroughput }
+export type { Throughput }

@@ -1,5 +1,5 @@
 import { count } from "console"
-import { getWorkItemClosedDates, throughput } from "../dataManiuplation"
+import { getWorkItemClosedDates, getThroughput } from "../dataManiuplation"
 
 test("Given a collection of work items, when getting these as closed dates, then it returns the 'Closed Date' property as a Date.", () => {
   const rows = [
@@ -52,7 +52,7 @@ test("Given a collection of dates, when getting the throughput, then it returns 
     new Date("8/22/2022 10:55:23 AM"),
     new Date("8/3/2022 5:54:15 PM"),
   ]
-  const actual = throughput(input)
+  const actual = getThroughput(input)
   expect(actual).toEqual([
     { date: new Date("8/1/2022 12:00:00 AM"), count: 1 },
     { date: new Date("8/8/2022 12:00:00 AM"), count: 0 },

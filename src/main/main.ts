@@ -6,6 +6,8 @@ import { format } from "url"
 import { app, BrowserWindow, dialog, ipcMain, session } from "electron"
 import { is } from "electron-util"
 import { searchDevtools } from "electron-search-devtools"
+import { getThroughput, getWorkItemClosedDates } from "./dataManiuplation"
+import { pipe } from "lodash/fp"
 
 let win: BrowserWindow | null = null
 
@@ -66,7 +68,9 @@ async function createWindow() {
         })
     })
 
-    return { filePath: filePaths[0], count, rows }
+    const throughput = pipe(getWorkItemClosedDates, getThroughput)(rows)
+
+    return { count, rows, throughput }
   })
 
   win.on("closed", () => {
