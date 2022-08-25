@@ -61,40 +61,40 @@ jobs:
           name: forecasting_windows
           path: dist/*.exe
 
-  package_linux:
-    name: Package application (Linux)
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.x
-      - uses: actions/cache@v2
-        with:
-          path: "node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
-      - name: Install dependencies
-        run: yarn
-      - name: Download artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: .
-      - name: Package and publish application
-        run: yarn release/linux ${{ inputs.publish_flag }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: Upload Linux app
-        uses: actions/upload-artifact@v2
-        with:
-          name: forecasting_linux
-          path: dist/*.deb
-      - name: Upload Linux app
-        uses: actions/upload-artifact@v2
-        with:
-          name: forecasting_linux
-          path: dist/*.apk
+  # package_linux:
+  #   name: Package application (Linux)
+  #   runs-on: ubuntu-latest
+  #   needs: [build]
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Use Node.js 16.x
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: 16.x
+  #     - uses: actions/cache@v2
+  #       with:
+  #         path: "node_modules"
+  #         key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
+  #     - name: Install dependencies
+  #       run: yarn
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         path: .
+  #     - name: Package and publish application
+  #       run: yarn release/linux ${{ inputs.publish_flag }}
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
+  #     - name: Upload Linux app
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: forecasting_linux
+  #         path: dist/*.deb
+  #     - name: Upload Linux app
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: forecasting_linux
+  #         path: dist/*.apk
 
   package_osx:
     name: Package application (OSX)
