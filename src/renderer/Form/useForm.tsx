@@ -1,3 +1,4 @@
+import { isEmpty } from "lodash"
 import { EventHandler, SyntheticEvent, useContext } from "react"
 import { FormType, ValidityType } from "./Form"
 import FormsContext from "./FormsContext"
@@ -11,9 +12,11 @@ const useForm: UseFormType = (id) => {
   const { reset, submit } = formsContext.getHandlers(id)
 
   const fields = formsContext.getValues(id)
-  const canSubmit = Object.values(fields).reduce((acc, field) => {
-    return acc && field.validity !== ValidityType.invalid
-  }, true)
+  const canSubmit =
+    !isEmpty(fields) &&
+    Object.values(fields).reduce((acc, field) => {
+      return acc && field.validity !== ValidityType.invalid
+    }, true)
   const form = { canSubmit, fields }
 
   return [submit, reset, form]

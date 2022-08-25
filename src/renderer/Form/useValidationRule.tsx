@@ -1,31 +1,34 @@
 import { useCallback } from "react"
-import type { FormValuesType, FormValueType } from "./Form"
+import type { FieldsType, FieldType } from "./Form"
 
 type ValidationOutputType = string | null
 type ChangeType = "change" | "blur" | "any"
-type ValidateType = (value: FormValueType, values: FormValuesType) => boolean
-type ValidationRuleType = (
-  value: FormValueType,
-  values: FormValuesType,
+type ValidateType<TValue> = (
+  value: FieldType<TValue>,
+  values: FieldsType,
+) => boolean
+type ValidationRuleType<TValue> = (
+  value: FieldType<TValue>,
+  values: FieldsType,
   changeType: ChangeType,
 ) => ValidationOutputType
 
-const useValidationRule = (
+const useValidationRule = <TValue extends any>(
   errorMessage: string,
-  validate: ValidateType,
+  validate: ValidateType<TValue>,
   changeType: ChangeType = "any",
 ) => {
   const rule = useCallback(
     (
-      value: FormValueType,
-      values: FormValuesType,
+      field: FieldType<TValue>,
+      fields: FieldsType,
       filterChangeType: ChangeType,
     ): ValidationOutputType => {
       if (changeType === "any") {
-        return validate(value, values) ? null : errorMessage
+        return validate(field, fields) ? null : errorMessage
       }
       if (changeType === filterChangeType) {
-        return validate(value, values) ? null : errorMessage
+        return validate(field, fields) ? null : errorMessage
       }
 
       return null

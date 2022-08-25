@@ -17,17 +17,17 @@ enum ValidityType {
   unknonwn,
 }
 type FormErrorType = string | ReactNode | null
-type FormValueType = {
+type FieldType<TValue> = {
   name: string
-  value: string
+  value: TValue
   touched: boolean
   validity: ValidityType
   error: FormErrorType
 }
-type FormValuesType = Record<string, FormValueType>
+type FieldsType = Record<string, FieldType<any>>
 type FormType = {
   canSubmit: boolean
-  fields: FormValuesType
+  fields: FieldsType
 }
 
 type FormProps = {
@@ -53,7 +53,7 @@ const Form: React.FC<FormProps> = ({ children, id, onReset, onSubmit }) => {
 
   const handleSubmit = useCallback<EventHandler<SyntheticEvent>>(
     (evt) => {
-      const form: FormValuesType = formsContext.forms[id] ?? {}
+      const form: FieldsType = formsContext.forms[id] ?? {}
       const values = Object.values(form)
       const isValid =
         !isEmpty(values) &&
@@ -89,4 +89,4 @@ const Form: React.FC<FormProps> = ({ children, id, onReset, onSubmit }) => {
 }
 
 export { Form, ValidityType }
-export type { FormType, FormValuesType, FormErrorType, FormValueType }
+export type { FormType, FieldsType, FormErrorType, FieldType }

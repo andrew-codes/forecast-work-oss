@@ -1,4 +1,6 @@
-import React from "react"
+import { isEmpty } from "lodash"
+import React, { useEffect, useCallback } from "react"
+import { Throughput } from "src/main/dataManiuplation"
 import { Form, Field, useForm, useValidationRule } from "../Form"
 import FilePicker from "../FormFields/FilePicker"
 
@@ -6,17 +8,24 @@ const UploadConfiguration: React.FC<ConfigurationFormProps> = ({
   id,
   onSubmit,
 }) => {
-  const validateRequired = useValidationRule(
+  const validateRequired = useValidationRule<{ throughput: Throughput }>(
     "Required",
-    (value, values) => !/^.+$/.test(value.value),
+    (field, fields) => !isEmpty(field.value.throughput),
+    "change",
   )
 
-  const [submit, reset, form] = useForm(id)
-  const handleSubmit = React.useCallback<(evt: React.SyntheticEvent) => void>(
-    (evt) => onSubmit(evt),
+  const handleSubmit = useCallback<(evt: React.SyntheticEvent) => void>(
+    onSubmit,
     [onSubmit],
   )
-  const handleReset = React.useCallback(() => {}, [])
+  const handleReset = useCallback(() => {}, [])
+
+  const [submit, reset, form] = useForm(id)
+  useEffect(() => {
+    if (form.canSubmit) {
+      submit(null)
+    }
+  }, [form, submit])
 
   return (
     <Form id={id} onSubmit={handleSubmit} onReset={handleReset}>
@@ -24,11 +33,12 @@ const UploadConfiguration: React.FC<ConfigurationFormProps> = ({
         <legend>
           <h3>Throughput via File</h3>
         </legend>
-        <Field
+        <Field<{ throughput: Throughput }>
           fullWidth
           as={FilePicker}
+          defaultValue={{ throughput: [] }}
           label="CSV File"
-          name="orgName"
+          name="data"
           validate={validateRequired}
         />
       </fieldset>

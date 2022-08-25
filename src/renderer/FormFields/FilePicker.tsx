@@ -1,24 +1,27 @@
-import React, { useCallback, useEffect } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { FormFieldComponentProps } from "../Form"
 
-console.log(electron.openDialog)
-
-const FilePicker: React.FC<FormFieldComponentProps> = ({
+const FilePicker = <TValue extends any>({
   onBlur,
   onChange,
   touched,
   value,
   valid,
-}) => {
-  const handleFileSelection = useCallback(async () => {
+}: FormFieldComponentProps<TValue>): JSX.Element => {
+  const [results, setResults] = useState(value)
+  const handleFileSelection = useCallback(async (evt) => {
     try {
-      const result = await electron.openCsvFile()
-
-      console.log(result)
+      const results = await electron.openCsvFile()
+      onBlur(evt)
+      setResults(results)
     } catch (error) {
       console.error(error)
     }
   }, [])
+
+  useEffect(() => {
+    onChange(null, results)
+  }, [results])
 
   return (
     <button type="button" onClick={handleFileSelection}>

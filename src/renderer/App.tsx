@@ -1,4 +1,4 @@
-import * as React from "react"
+import React, { useState } from "react"
 import {
   Content,
   LeftSidebar,
@@ -7,8 +7,9 @@ import {
 } from "@atlaskit/page-layout"
 import { NavigationContent, SideNavigation } from "@atlaskit/side-navigation"
 import styled from "styled-components"
-import AdoConfigurationForm from "./configuration/AdoConfigurationForm"
+// import AdoConfigurationForm from "./configuration/AdoConfigurationForm"
 import UploadConfiguration from "./configuration/UploadConfiguration"
+import { useForm } from "./Form"
 
 const NavBorder = styled.div`
   --ds-surface: var(--side-bar-color);
@@ -36,8 +37,12 @@ const MainContent = styled.div`
 
 const App = () => {
   const { collapseLeftSidebar } = usePageLayoutResize()
+  const [, , form] = useForm("uploadConfiguration")
+  const [data, setData] = useState({ throughput: [] })
   const handleSubmit = React.useCallback(() => {
     collapseLeftSidebar()
+    console.log(form)
+    // setData(form.fields.data.value)
   }, [collapseLeftSidebar])
 
   return (

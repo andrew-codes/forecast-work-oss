@@ -8,7 +8,7 @@ import React, {
 } from "react"
 import styled from "styled-components"
 import { isEmpty, merge } from "lodash"
-import { FormValueType, ValidityType } from "./Form"
+import { FieldType, ValidityType } from "./Form"
 import FormContext from "./FormContext"
 import FormsContext from "./FormsContext"
 import { ValidationRuleType } from "./useValidationRule"
@@ -35,33 +35,36 @@ const RequiredMark = styled.span`
 `
 const Required = () => <RequiredMark>*</RequiredMark>
 
-type FieldEventHandlerType = (evt: SyntheticEvent, value: any) => void
+type FieldEventHandlerType<TValue> = (
+  evt: SyntheticEvent,
+  value: TValue,
+) => void
 
-type FormFieldComponentProps = {
-  onBlur: FieldEventHandlerType
-  onChange: FieldEventHandlerType
-  value: any
+type FormFieldComponentProps<TValue> = {
+  onBlur: React.EventHandler
+  onChange: FieldEventHandlerType<TValue>
+  value: TValue
   touched?: boolean
   valid?: ValidityType
 }
 
-interface FieldPropTypes {
-  as: React.FC<FormFieldComponentProps>
-  defaultValue?: string
+interface FieldPropTypes<TValue> {
+  as: (props: FormFieldComponentProps<TValue>) => JSX.Element
+  defaultValue?: TValue
   fullWidth?: boolean
   hintText?: string | ReactNode
   label: string
   name: string
   onBlur?: EventHandler<SyntheticEvent>
   onChange?: EventHandler<SyntheticEvent>
-  validate?: ValidationRuleType
+  validate?: ValidationRuleType<TValue>
 }
 
-const generateDefaultValue: (
+const generateDefaultValue: <TValue>(
   name: string,
-  defaultValue: string,
+  defaultValue: TValue,
   hasValidation: boolean,
-) => FormValueType = (name, defaultValue, hasValidation) => ({
+) => FieldType<TValue> = (name, defaultValue, hasValidation) => ({
   name,
   value: defaultValue,
   touched: false,
@@ -72,7 +75,7 @@ const generateDefaultValue: (
   error: null,
 })
 
-const Field: React.FC<FieldPropTypes> = ({
+const Field = <TValue extends any>({
   as,
   defaultValue,
   name,
@@ -82,13 +85,13 @@ const Field: React.FC<FieldPropTypes> = ({
   onChange = (evt) => {},
   validate,
   ...rest
-}) => {
+}: FieldPropTypes<TValue>): JSX.Element => {
   const { getValues, setValue } = useContext(FormsContext)
   const id = useContext(FormContext)
   const values = getValues(id)
   const value =
-    (values[name] as FormValueType) ||
-    generateDefaultValue(name, defaultValue ?? "", !!validate)
+    (values[name] as FieldType<TValue>) ||
+    generateDefaultValue(name, defaultValue, !!validate)
 
   useEffect(() => {
     setValue(id, value)
@@ -110,9 +113,9 @@ const Field: React.FC<FieldPropTypes> = ({
     [setValue, onBlur, id, value],
   )
 
-  const handleChange = useCallback<FieldEventHandlerType>(
+  const handleChange = useCallback<FieldEventHandlerType<TValue>>(
     (evt, v) => {
-      const newValue: FormValueType = merge({}, value, {
+      const newValue: FieldType<TValue> = merge({}, value, {
         value: v,
       })
       let error = null
