@@ -10,6 +10,9 @@ import styled from "styled-components"
 // import AdoConfigurationForm from "./configuration/AdoConfigurationForm"
 import UploadConfiguration from "./configuration/UploadConfiguration"
 import { useForm } from "./Form"
+import { isEmpty } from "lodash"
+import { AxisOptions, Chart } from "react-charts"
+import { Throughput } from "src/main/dataManiuplation"
 
 const NavBorder = styled.div`
   --ds-surface: var(--side-bar-color);
@@ -38,12 +41,30 @@ const MainContent = styled.div`
 const App = () => {
   const { collapseLeftSidebar } = usePageLayoutResize()
   const [, , form] = useForm("uploadConfiguration")
-  const [data, setData] = useState({ throughput: [] })
+  const [throughputSeriesData, setThroughputSeriesData] = useState([])
   const handleSubmit = React.useCallback(() => {
-    collapseLeftSidebar()
-    console.log(form)
-    // setData(form.fields.data.value)
-  }, [collapseLeftSidebar])
+    if (form.canSubmit && !isEmpty(form.fields.data.value.throughput)) {
+      collapseLeftSidebar()
+      console.log(form)
+      setThroughputSeriesData(form.fields.data.value.throughput)
+    }
+  }, [collapseLeftSidebar, form])
+
+  const primaryAxis = React.useMemo(
+    (): AxisOptions<{ date: Date; count: number }> => ({
+      getValue: (datum) => datum.date,
+    }),
+    [],
+  )
+
+  const secondaryAxes = React.useMemo(
+    (): AxisOptions<{ date: Date; count: number }>[] => [
+      {
+        getValue: (datum) => datum.count,
+      },
+    ],
+    [],
+  )
 
   return (
     <Content>
@@ -65,6 +86,21 @@ const App = () => {
       <Main>
         <MainContent>
           <h1>ADO Forecasting Tool</h1>
+          {!isEmpty(throughputSeriesData) && (
+            <>
+              <h2>Weekly Throughput</h2>
+              <Chart
+                options={{
+                  data: [
+                    { label: "Weekly Throughput", data: throughputSeriesData },
+                  ],
+                  dark: true,
+                  primaryAxis,
+                  secondaryAxes,
+                }}
+              />
+            </>
+          )}
         </MainContent>
       </Main>
     </Content>
