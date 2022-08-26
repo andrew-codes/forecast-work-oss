@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Install browser(s)
-        run: yarn playwright install --with-deps chromium
+        run: yarn playwright install --with-deps electron
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
