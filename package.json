@@ -20,10 +20,10 @@
     "release/windows": "electron-builder build --windows portable nsis",
     "clean": "rimraf dist",
     "lint": "exit 0",
-    "test/ci": "exit 0",
-    "test/e2e": "exit 0",
-    "test/e2e/ci": "exit 0",
-    "test/unit": "jest --coverage"
+    "test/e2e": "chokidar \"src/**/*.ts\" \"e2e/**/*.ts\" -c \"yarn build && playwright test\"",
+    "test/e2e/ci": "playwright test",
+    "test/unit": "jest --coverage",
+    "test/unit/ci": "yarn test/unit"
   },
   "dependencies": {
     "@atlaskit/page-layout": "^1.2.7",
@@ -37,12 +37,14 @@
     "styled-components": "^5.3.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.25.1",
     "@types/jest": "^28.1.8",
     "@types/lodash": "^4.14.183",
     "@types/node": "^18.7.1",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@types/styled-components": "^5.1.26",
+    "chokidar-cli": "^3.0.0",
     "cross-env": "^7.0.3",
     "electron": "^20.0.2",
     "electron-builder": "^23.3.3",
@@ -52,6 +54,7 @@
     "esbuild": "^0.15.3",
     "jest": "^28.1.3",
     "jest-when": "^3.5.1",
+    "playwright": "^1.25.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^28.0.8",
     "typescript": "~4.6.3"
