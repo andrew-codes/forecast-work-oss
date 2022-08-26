@@ -12,8 +12,6 @@ jobs:
   build:
     needs: [lint_and_test]
     uses: andrew-codes/forecast-work/.github/workflows/build.yml@main
-    with:
-      publish_flag: "--publish always"
  
   e2e:
     needs: [build]
