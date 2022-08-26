@@ -25,6 +25,6 @@ jobs:
         with:
           path: .
       - name: Test
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" -- npx playwright test
+        run: ls dist/main/ && xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" -- npx playwright test
         env:
           DEBUG: pw:browser*
