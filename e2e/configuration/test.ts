@@ -10,7 +10,7 @@ const test = base.extend<Fixtures>({
   electronApp: async ({ page }, use) => {
     const app = await electron.launch({
       env: {
-        NODE_ENV: "production",
+        NODE_ENV: "development",
         ELECTRON_IS_DEV: "0",
       },
       args: [path.join(__dirname, "..", "..", "dist", "main", "main.js")],
