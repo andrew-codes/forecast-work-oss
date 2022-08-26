@@ -5,7 +5,7 @@ on:
 jobs:
   e2e:
     name: E2E Tests
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 16.x
@@ -18,6 +18,8 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
       - name: Install dependencies
         run: yarn
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       - name: Install browser(s)
         run: yarn playwright install --with-deps chromium
       - name: Download artifacts
@@ -25,6 +27,6 @@ jobs:
         with:
           path: .
       - name: Test
-        run: ls dist/main/ && xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" -- npx playwright test
+        run: npx playwright test
         env:
           DEBUG: pw:browser*
