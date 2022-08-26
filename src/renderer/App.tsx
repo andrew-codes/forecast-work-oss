@@ -85,7 +85,7 @@ const App = () => {
       </NavBorder>
       <Main>
         <MainContent>
-          <h1>ADO Forecasting Tool</h1>
+          <h1>Work Forecasting Tool</h1>
           {!isEmpty(throughputSeriesData) && (
             <>
               <h2>Weekly Throughput</h2>

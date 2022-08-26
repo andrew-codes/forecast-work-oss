@@ -1,10 +1,10 @@
-name: Lint and test workflow
+name: Build app
 on:
   workflow_call:
 
 jobs:
-  lint_and_test:
-    name: Lint and unit test
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,7 +18,10 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
       - name: Install dependencies
         run: yarn
-      - name: Lint
-        run: yarn lint
-      - name: Test
-        run: yarn test/unit/ci
+      - name: Build
+        run: yarn build
+      - name: Upload built code
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: dist

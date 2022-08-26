@@ -1,6 +1,5 @@
 import fs from "fs"
 import path from "path"
-
 import { parseStream } from "fast-csv"
 import { format } from "url"
 import { app, BrowserWindow, dialog, ipcMain, session } from "electron"
@@ -26,7 +25,6 @@ async function createWindow() {
   })
 
   const isDev = is.development
-
   if (isDev) {
     // this is the default port electron-esbuild is using
     win.loadURL("http://localhost:9080")
