@@ -10,7 +10,6 @@ jobs:
     uses: andrew-codes/forecast-work/.github/workflows/lint-and-test.yml@main
   
   build:
-    needs: [lint_and_test]
     uses: andrew-codes/forecast-work/.github/workflows/build.yml@main
  
   e2e:
