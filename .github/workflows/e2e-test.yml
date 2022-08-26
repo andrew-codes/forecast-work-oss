@@ -30,3 +30,4 @@ jobs:
         run: npx playwright test
         env:
           DEBUG: pw:browser*
+          DISPLAY: 99
