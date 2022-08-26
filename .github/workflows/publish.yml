@@ -1,0 +1,38 @@
+name: Publish
+on:
+  workflow_call:
+
+jobs:
+  publish:
+    name: Publish to Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts (Windows)
+        uses: actions/download-artifact@v2
+        with:
+          name: forecasting_windows
+          path: .
+      - name: Download artifacts (OSX)
+        uses: actions/download-artifact@v2
+        with:
+          name: forecasting_osx
+          path: .
+      - name: Download artifacts (Linux)
+        uses: actions/download-artifact@v2
+        with:
+          name: forecasting_linux
+          path: .
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          files: |
+            LICENSE
+            README.md
+            CHANGELOG.md
+            *.exe
+            *.dmg
+            *.apk
+            *.deb
+
