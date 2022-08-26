@@ -18,7 +18,6 @@ async function createWindow() {
     minWidth: 650,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: true,
       preload: path.join(__dirname, "preload.js"),
     },
     show: false,
@@ -89,6 +88,12 @@ async function createWindow() {
 
     if (isDev) {
       searchDevtools("REACT").then((devtools) => {
+        console.log(devtools)
+        session.defaultSession.loadExtension(devtools, {
+          allowFileAccess: true,
+        })
+      })
+      searchDevtools("REDUX").then((devtools) => {
         session.defaultSession.loadExtension(devtools, {
           allowFileAccess: true,
         })

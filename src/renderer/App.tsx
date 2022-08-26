@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import {
   Content,
   LeftSidebar,
@@ -39,25 +39,30 @@ const MainContent = styled.div`
 `
 
 const App = () => {
-  const { collapseLeftSidebar } = usePageLayoutResize()
+  const { collapseLeftSidebar, expandLeftSidebar } = usePageLayoutResize()
   const [, , form] = useForm("uploadConfiguration")
-  const [throughputSeriesData, setThroughputSeriesData] = useState([])
-  const handleSubmit = React.useCallback(() => {
+  const [throughputSeriesData, setThroughputSeriesData] = useState<Throughput>(
+    [],
+  )
+  const handleSubmit = useCallback(() => {
     if (form.canSubmit && !isEmpty(form.fields.data.value.throughput)) {
       collapseLeftSidebar()
-      console.log(form)
       setThroughputSeriesData(form.fields.data.value.throughput)
     }
   }, [collapseLeftSidebar, form])
+  useEffect(() => {
+    if (isEmpty(throughputSeriesData)) {
+      expandLeftSidebar()
+    }
+  }, [throughputSeriesData])
 
-  const primaryAxis = React.useMemo(
+  const primaryAxis = useMemo(
     (): AxisOptions<{ date: Date; count: number }> => ({
       getValue: (datum) => datum.date,
     }),
     [],
   )
-
-  const secondaryAxes = React.useMemo(
+  const secondaryAxes = useMemo(
     (): AxisOptions<{ date: Date; count: number }>[] => [
       {
         getValue: (datum) => datum.count,
@@ -71,7 +76,7 @@ const App = () => {
       <NavBorder>
         <LeftSidebar width={350}>
           <SideNavigation label="Configuration">
-            <NavLayout>
+            <NavLayout data-component="NavLayout">
               <NavigationContent>
                 <h2>Configuration</h2>
                 <UploadConfiguration
@@ -86,6 +91,7 @@ const App = () => {
       <Main>
         <MainContent>
           <h1>Work Forecasting Tool</h1>
+          <button disabled>Start</button>
           {!isEmpty(throughputSeriesData) && (
             <>
               <h2>Weekly Throughput</h2>
