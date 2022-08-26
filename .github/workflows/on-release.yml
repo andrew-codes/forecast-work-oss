@@ -6,5 +6,24 @@ on:
       - "*"
 
 jobs:
+  lint_and_test:
+    uses: andrew-codes/forecast-work/.github/workflows/lint-and-test.yml@main
+
+  build:
+    uses: andrew-codes/forecast-work/.github/workflows/build.yml@main
+
+  e2e:
+    needs: [build]
+    uses: andrew-codes/forecast-work/.github/workflows/e2e-test.yml@main
+
+  package:
+    needs: [build]
+    uses: andrew-codes/forecast-work/.github/workflows/package.yml@main
+
+  publish:
+    needs: [package, e2e, lint_and_test]
+    uses: andrew-codes/forecast-work/.github/workflows/publish.yml@main
+
   publish_changelog:
+    needs: [publish]
     uses: andrew-codes/forecast-work/.github/workflows/publish-changelog.yml@main

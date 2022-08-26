@@ -16,8 +16,6 @@ jobs:
     needs: [build]
     uses: andrew-codes/forecast-work/.github/workflows/e2e-test.yml@main
 
-  package_and_publish:
-    needs: [lint_and_test, build, e2e]
+  package:
+    needs: [build]
     uses: andrew-codes/forecast-work/.github/workflows/package.yml@main
-    with:
-      publish_flag: "--publish always"

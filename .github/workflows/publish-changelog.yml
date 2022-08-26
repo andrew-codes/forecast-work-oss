@@ -28,8 +28,7 @@ jobs:
           name: CHANGELOG.md
           path: CHANGELOG.md
       - name: Update release with release notes
-        id: update_release
-        uses: tubone24/update_release@v1.3.1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
