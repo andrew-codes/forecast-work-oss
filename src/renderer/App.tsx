@@ -18,7 +18,6 @@ const NavBorder = styled.div`
   --ds-surface: var(--side-bar-color);
   height: 100vh;
   border-right: 1px solid var(--border-color);
-  --leftSidebarWidth: 350px;
 `
 
 const NavLayout = styled.div`
@@ -41,16 +40,15 @@ const MainContent = styled.div`
 
 const App = () => {
   const { collapseLeftSidebar, expandLeftSidebar } = usePageLayoutResize()
-  const [, , form] = useForm("uploadConfiguration")
   const [throughputSeriesData, setThroughputSeriesData] = useState<Throughput>(
     [],
   )
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback((evt, form) => {
     electron.openCsvFile(form.fields.filePath.value).then((results => {
       collapseLeftSidebar()
-      setThroughputSeriesData(results)
+      setThroughputSeriesData(results.throughput)
     }))
-  }, [collapseLeftSidebar, form])
+  }, [collapseLeftSidebar])
   useEffect(() => {
     if (isEmpty(throughputSeriesData)) {
       expandLeftSidebar()
@@ -92,7 +90,6 @@ const App = () => {
       <Main>
         <MainContent>
           <h1>Work Forecasting Tool</h1>
-
           {!isEmpty(throughputSeriesData) && (
             <>
               <h2>Weekly Throughput</h2>

@@ -2,12 +2,9 @@ import React, {
   EventHandler,
   ReactNode,
   SyntheticEvent,
-  useCallback,
   useContext,
   useEffect,
-  useMemo,
 } from "react"
-import { isEmpty } from "lodash"
 import { FormProvider } from "./FormProvider"
 import FormsContext from "./FormsContext"
 
@@ -34,52 +31,21 @@ type FormProps = {
   children: React.ReactNode
   id: string
   onReset: EventHandler<SyntheticEvent>
-  onSubmit: EventHandler<SyntheticEvent>
+  onSubmit: (evt: SyntheticEvent, form: FormType) => void
 }
 const Form: React.FC<FormProps> = ({ children, id, onReset, onSubmit }) => {
-  const formsContext = useContext(FormsContext)
+  const { registerForm, registerEventHandlers } = useContext(FormsContext)
 
   useEffect(() => {
-    formsContext.registerForm(id)
-  }, [id])
-
-  const handleReset = useCallback<EventHandler<SyntheticEvent>>(
-    (evt) => {
-      formsContext.setValues(id, {})
-      onReset(evt)
-    },
-    [formsContext.forms[id], onReset],
-  )
-
-  const handleSubmit = useCallback<EventHandler<SyntheticEvent>>(
-    (evt) => {
-      const form: FieldsType = formsContext.forms[id] ?? {}
-      const values = Object.values(form)
-      const isValid =
-        !isEmpty(values) &&
-        values.reduce<boolean>(
-          (acc, value) => acc && value.validity !== ValidityType.invalid,
-          true,
-        )
-      if (!isValid) {
-        return
-      }
-      onSubmit(evt)
-    },
-    [formsContext.forms[id], onSubmit],
-  )
-
-  const eventHandlers = useMemo(
-    () => ({
-      reset: handleReset,
-      submit: handleSubmit,
-    }),
-    [handleReset, handleSubmit],
-  )
+    registerForm(id)
+  }, [registerForm, id])
 
   useEffect(() => {
-    formsContext.registerEventHandlers(id, eventHandlers)
-  }, [id, eventHandlers])
+    registerEventHandlers(id, {
+      reset: onReset,
+      submit: onSubmit,
+    })
+  }, [id, onReset, registerEventHandlers, onSubmit])
 
   return (
     <FormProvider id={id}>

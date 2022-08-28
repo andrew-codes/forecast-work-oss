@@ -1,8 +1,7 @@
-import { isEmpty } from "lodash"
-import React, { useEffect, useCallback } from "react"
-import { Throughput } from "src/main/dataManiuplation"
-import { Form, Field, useForm, useValidationRule } from "../Form"
+import React, { useCallback } from "react"
+import { Form, Field, useForm, useValidationRule, FormType } from "../Form"
 import FilePicker from "../FormFields/FilePicker"
+import ConfigurationFormProps from "./ConfigurationFormProps"
 
 const UploadConfiguration: React.FC<ConfigurationFormProps> = ({
   id,
@@ -14,11 +13,9 @@ const UploadConfiguration: React.FC<ConfigurationFormProps> = ({
     "change",
   )
 
-  const handleSubmit = useCallback<(evt: React.SyntheticEvent) => void>((evt) => {
-    console.log(form.fields.filePath)
-    // onSubmit,
-  },
-    [onSubmit],
+  const handleSubmit = useCallback<(evt: React.SyntheticEvent, form: FormType) => void>((evt, form) => {
+    onSubmit(evt, form)
+  }, [onSubmit],
   )
   const handleReset = useCallback(() => { }, [])
 
