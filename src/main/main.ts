@@ -37,13 +37,8 @@ async function createWindow() {
     )
   }
 
-  ipcMain.handle("dialog", async (event, method, params) => {
-    const { canceled, filePaths } = await dialog[method](params)
-    if (canceled) {
-      return
-    }
-
-    const fileStream = fs.createReadStream(filePaths[0])
+  ipcMain.handle("cvsFileDataSet", async (event, { filePath }: { filePath: string }) => {
+    const fileStream = fs.createReadStream(filePath)
     const options = {
       objectMode: true,
       delimiter: ",",

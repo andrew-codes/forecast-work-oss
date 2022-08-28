@@ -10,3 +10,4 @@ dist/
 *.log
 coverage
 test-results
+!e2e/fixtures/*.csv

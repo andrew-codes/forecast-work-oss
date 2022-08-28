@@ -6,16 +6,15 @@ import React, {
   useReducer,
   useState,
 } from "react"
-import { noop } from "lodash"
+import { merge, noop } from "lodash"
 import type { FieldsType } from "./Form"
 import FormsContext from "./FormsContext"
 import type { FieldType } from "."
-import { merge } from "@fluentui/react"
 
 type FormsProviderProps = { children: React.ReactNode }
 type RegisterFormType = (id: string) => void
 type GetFormValuesType = (id: string) => FieldsType
-type SetValueType = (id: string, value: FieldType) => void
+type SetValueType = (id: string, value: FieldType<any>) => void
 type SetValuesType = (id: string, values: FieldsType) => void
 type GetHandlers = (id: string) => {
   reset: EventHandler<SyntheticEvent>
@@ -32,7 +31,7 @@ type RegisterEventHandlers = (
 type RegisterAction = { type: "register"; payload: { id: string } }
 type SetOneAction = {
   type: "setOne"
-  payload: { id: string; value: FieldType }
+  payload: { id: string; value: FieldType<any> }
 }
 type SetAllAction = {
   type: "setAll"
@@ -45,20 +44,17 @@ const reducer = (
 ): Record<string, FieldsType> => {
   switch (action.type) {
     case "register":
-      return { ...state, [action.payload.id]: {} }
+      return merge({}, state, { [action.payload.id]: {} })
     case "setOne":
-      return {
-        ...state,
+      return merge({}, state, {
         [action.payload.id]: {
-          ...state[action.payload.id],
           [action.payload.value.name]: action.payload.value,
         },
-      }
+      })
     case "setAll":
-      return {
-        ...state,
+      return merge({}, state, {
         [action.payload.id]: action.payload.values,
-      }
+      })
   }
 }
 

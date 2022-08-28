@@ -24,7 +24,7 @@ type FormsContextType = {
     },
   ) => void
   registerForm: (id: string) => void
-  setValue: (id: string, value: FieldType) => void
+  setValue: (id: string, value: FieldType<any>) => void
   setValues: (id: string, values: FieldsType) => void
 }
 
