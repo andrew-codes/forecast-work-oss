@@ -1,7 +1,7 @@
 import path from "path"
 import { test, expect } from "../configuration/test"
 
-test("Given I am have set a valid configuration in the Configuration Pane, when I view click the start button, then the Configuration Pane is collapsed and the throughput is visible.", async ({
+test.skip("Given I am have set a valid configuration in the Configuration Pane, when I view click the start button, then the Configuration Pane is collapsed and the throughput is visible.", async ({
   electronApp,
 }) => {
   const firstWindow = await electronApp.firstWindow()
