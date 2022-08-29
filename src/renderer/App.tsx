@@ -172,7 +172,7 @@ const App = () => {
               </Bordered>
               <hr />
               <h3>Throughput by Week</h3>
-              <ChartContainer>
+              <ChartContainer data-test="WeeklyThroughputChart">
                 <Chart
                   options={{
                     data: [

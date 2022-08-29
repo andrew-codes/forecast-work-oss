@@ -11,6 +11,6 @@ test.only("Given I am have set a valid configuration in the Configuration Pane, 
     .click()
   await firstWindow.waitForTimeout(1200)
   expect(
-    await firstWindow.locator('[data-test="Throughput"]').screenshot(),
-  ).toMatchSnapshot("throughput.png")
+    await firstWindow.locator('[data-test="WeeklyThroughputChart"]').screenshot(),
+  ).toMatchSnapshot("weekly-throughput-chart.png")
 })
