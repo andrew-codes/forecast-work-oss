@@ -5,7 +5,10 @@ on:
 jobs:
   e2e:
     name: E2E Tests
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 16.x

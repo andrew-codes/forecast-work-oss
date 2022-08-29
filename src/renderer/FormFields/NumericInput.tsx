@@ -9,7 +9,7 @@ const Input = styled.input<{ borderColor: string }>`
   box-sizing: border-box;
 `
 
-const TextField: React.FC<FormFieldComponentProps<string>> = ({
+const TextField: React.FC<FormFieldComponentProps<number>> = ({
   onBlur,
   onChange,
   touched,
@@ -38,15 +38,15 @@ const TextField: React.FC<FormFieldComponentProps<string>> = ({
 
   const change = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
-      onChange(evt, evt.target.value)
+      onChange(evt, parseInt(evt.target.value, 10))
     },
     [onChange],
   )
 
   return (
     <Input
-      type="text"
-      value={value}
+      type="number"
+      value={value.toString()}
       onBlur={blur}
       onChange={change}
       borderColor={getBorderColor()}

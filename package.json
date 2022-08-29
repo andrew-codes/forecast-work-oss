@@ -20,7 +20,7 @@
     "release/windows": "electron-builder build --windows portable nsis",
     "clean": "rimraf dist",
     "lint": "exit 0",
-    "test/e2e": "chokidar \"src/**/*.ts\" \"e2e/**/*.ts\" -c \"yarn build && playwright test\"",
+    "test/e2e": "chokidar \"src/**/*.ts\" \"src/**/*.tsx\" \"e2e/**/*.ts\" -c \"yarn build && playwright test\"",
     "test/e2e/ci": "playwright test",
     "test/unit": "jest --coverage",
     "test/unit/ci": "yarn test/unit"

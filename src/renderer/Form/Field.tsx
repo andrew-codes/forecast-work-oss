@@ -25,7 +25,7 @@ const Aligned = styled.div<AlignedProps>`
   height: 1.25rem;
 `
 const FieldLabel = styled(Aligned)`
-  color: #6c798f;
+  color: var(--text-color);
 `
 const ErrorMessage = styled(Aligned)`
   color: pink;
@@ -41,7 +41,7 @@ type FieldEventHandlerType<TValue> = (
 ) => void
 
 type FormFieldComponentProps<TValue> = {
-  onBlur: React.EventHandler
+  onBlur: React.EventHandler<React.SyntheticEvent>
   onChange: FieldEventHandlerType<TValue>
   value: TValue
   touched?: boolean
@@ -75,31 +75,27 @@ const generateDefaultValue: <TValue>(
   error: null,
 })
 
-const Field = <TValue extends any>({
+const Field = <TValue extends any, TRest extends object>({
   as,
   defaultValue,
   name,
   fullWidth,
   label,
-  onBlur = (evt) => {},
-  onChange = (evt) => {},
+  onBlur = (evt) => { },
+  onChange = (evt) => { },
   validate,
   ...rest
-}: FieldPropTypes<TValue>): JSX.Element => {
+}: FieldPropTypes<TValue> & TRest): JSX.Element => {
   const { getValues, setValue } = useContext(FormsContext)
   const id = useContext(FormContext)
   const values = getValues(id)
-  const value =
-    (values[name] as FieldType<TValue>) ||
+  const field =
+    (values[name] as FieldType<TValue>) ??
     generateDefaultValue(name, defaultValue, !!validate)
-
-  useEffect(() => {
-    setValue(id, value)
-  }, [id, setValue, value])
 
   const handleBlur = useCallback<EventHandler<SyntheticEvent>>(
     (evt) => {
-      const newValue = merge({}, value, { touched: true })
+      const newValue = merge({}, field, { touched: true })
       let error = null
       if (!!validate) {
         error = validate(newValue, values, "blur")
@@ -110,12 +106,12 @@ const Field = <TValue extends any>({
       setValue(id, newValue)
       onBlur(evt)
     },
-    [setValue, onBlur, id, value],
+    [setValue, onBlur, id, field],
   )
 
   const handleChange = useCallback<FieldEventHandlerType<TValue>>(
     (evt, v) => {
-      const newValue: FieldType<TValue> = merge({}, value, {
+      const newValue: FieldType<TValue> = merge({}, field, {
         value: v,
       })
       let error = null
@@ -128,25 +124,25 @@ const Field = <TValue extends any>({
       setValue(id, newValue)
       onChange(evt)
     },
-    [value, setValue, onChange, id],
+    [field, setValue, onChange, id],
   )
 
   const FormField = as
 
   return (
-    <label>
+    <label data-test={name} data-component="Field">
       <FieldLabel fullWidth={fullWidth}>
         {label} {!!validate && <Required />}
       </FieldLabel>
       <FormField
         {...rest}
-        touched={value.touched}
-        valid={value.validity}
-        value={value.value}
+        touched={field.touched}
+        valid={field.validity}
+        value={field.value}
         onBlur={handleBlur}
         onChange={handleChange}
       />
-      <ErrorMessage fullWidth={fullWidth}>{value.error}</ErrorMessage>
+      <ErrorMessage fullWidth={fullWidth}>{field.error}</ErrorMessage>
     </label>
   )
 }

@@ -1,47 +1,42 @@
-import { isEmpty } from "lodash"
-import React, { useEffect, useCallback } from "react"
-import { Throughput } from "src/main/dataManiuplation"
-import { Form, Field, useForm, useValidationRule } from "../Form"
+import React, { useCallback } from "react"
+import { Form, Field, useForm, useValidationRule, FormType } from "../Form"
 import FilePicker from "../FormFields/FilePicker"
+import ConfigurationFormProps from "./ConfigurationFormProps"
 
 const UploadConfiguration: React.FC<ConfigurationFormProps> = ({
   id,
   onSubmit,
 }) => {
-  const validateRequired = useValidationRule<{ throughput: Throughput }>(
+  const [submit, reset, form] = useForm(id)
+  const handleSubmit = useCallback<(evt: React.SyntheticEvent, form: FormType) => void>((evt, form) => {
+    onSubmit(evt, form)
+  }, [onSubmit],
+  )
+  const handleReset = useCallback(() => { }, [])
+
+  const validateRequired = useValidationRule<string>(
     "Required",
-    (field, fields) => !isEmpty(field.value.throughput),
+    (field, fields) => field.value !== "",
     "change",
   )
-
-  const handleSubmit = useCallback<(evt: React.SyntheticEvent) => void>(
-    onSubmit,
-    [onSubmit],
-  )
-  const handleReset = useCallback(() => {}, [])
-
-  const [submit, reset, form] = useForm(id)
-  useEffect(() => {
-    if (form.canSubmit) {
-      submit(null)
-    }
-  }, [form, submit])
 
   return (
     <Form id={id} onSubmit={handleSubmit} onReset={handleReset}>
       <fieldset>
         <legend>
-          <h3>Throughput via File</h3>
+          <h3>Historical Data</h3>
         </legend>
-        <Field<{ throughput: Throughput }>
+        <Field<string, { accept: string }>
           fullWidth
+          accept="text/csv"
           as={FilePicker}
-          defaultValue={{ throughput: [] }}
+          defaultValue=""
           label="CSV File"
-          name="data"
+          name="filePath"
           validate={validateRequired}
         />
       </fieldset>
+      <button type="button" disabled={!form.canSubmit} onClick={submit}>Start</button>
     </Form>
   )
 }

@@ -6,6 +6,7 @@ const config: BuildOptions = {
   entryPoints: [path.resolve("src/renderer/index.tsx")],
   bundle: true,
   target: "chrome100", // electron version target
+  minify: process.env.NODE_ENV === "production",
 }
 
 export default config
