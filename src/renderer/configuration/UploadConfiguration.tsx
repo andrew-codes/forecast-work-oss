@@ -7,19 +7,18 @@ const UploadConfiguration: React.FC<ConfigurationFormProps> = ({
   id,
   onSubmit,
 }) => {
-  const validateRequired = useValidationRule<string>(
-    "Required",
-    (field, fields) => field.value !== "",
-    "change",
-  )
-
+  const [submit, reset, form] = useForm(id)
   const handleSubmit = useCallback<(evt: React.SyntheticEvent, form: FormType) => void>((evt, form) => {
     onSubmit(evt, form)
   }, [onSubmit],
   )
   const handleReset = useCallback(() => { }, [])
 
-  const [submit, reset, form] = useForm(id)
+  const validateRequired = useValidationRule<string>(
+    "Required",
+    (field, fields) => field.value !== "",
+    "change",
+  )
 
   return (
     <Form id={id} onSubmit={handleSubmit} onReset={handleReset}>

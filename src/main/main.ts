@@ -2,11 +2,11 @@ import fs from "fs"
 import path from "path"
 import { parseStream } from "fast-csv"
 import { format } from "url"
-import { app, BrowserWindow, dialog, ipcMain, session } from "electron"
+import { app, BrowserWindow, ipcMain, session } from "electron"
 import { is } from "electron-util"
 import { searchDevtools } from "electron-search-devtools"
-import { getThroughput, getWorkItemClosedDates } from "./dataManiuplation"
-import { pipe } from "lodash/fp"
+import { createForecastFromDistribution, createSimulationDistribution, getThroughputByDay, getThroughputByWeek, getWorkItemClosedDates } from "./dataManiuplation"
+import { pipe, } from "lodash/fp"
 
 let win: BrowserWindow | null = null
 
@@ -59,10 +59,11 @@ async function createWindow() {
           resolve([rowCount, data])
         })
     })
+    const throughputByWeek = pipe(getWorkItemClosedDates, getThroughputByWeek)(rows)
+    const distribution = pipe(getWorkItemClosedDates, getThroughputByDay, createSimulationDistribution(12000, 90))(rows)
+    const forecast = createForecastFromDistribution(distribution)
 
-    const throughput = pipe(getWorkItemClosedDates, getThroughput)(rows)
-
-    return { count, rows, throughput }
+    return [{ count, rows }, throughputByWeek, distribution, forecast]
   })
 
   win.on("closed", () => {

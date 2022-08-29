@@ -1,5 +1,7 @@
+import { sample } from "lodash";
 import {
   cond,
+  entries,
   every,
   first,
   get,
@@ -11,8 +13,11 @@ import {
   result,
   sortBy,
   stubTrue,
+  sum,
   values,
 } from "lodash/fp"
+
+type Throughput = { date: Date; count: number }[]
 
 const useFirstColumn = pipe(map(values), map(get(0)))
 const useColumnByName = (name: string) => map(get(name))
@@ -29,17 +34,16 @@ const getWorkItemClosedDates = pipe(
   convertToDate,
 )
 
-const addDays = (numberOfDays: number) => (date: Date) => {
-  const newDate = new Date(date)
-  return new Date(newDate.setDate(newDate.getDate() + numberOfDays))
-}
-const addOneWeek = addDays(7)
 const reduceWithAllArgs = (iteratee, start) => (items) =>
   items.reduce(iteratee, start)
 type ThroughputResult = {
   date: Date
   count: number
 }
+const mapWithAllArgs = (iteratee) => (items) =>
+  items.map(iteratee)
+
+
 const getThroughput: (dates: Date[]) => Throughput = pipe(
   sortBy(identity),
   map((date: Date) => {
@@ -57,28 +61,61 @@ const getThroughput: (dates: Date[]) => Throughput = pipe(
   ),
   groupBy(identity),
   values,
-  map((dates: Date[]) => ({ date: first(dates), count: dates.length })),
-  reduceWithAllArgs(
-    (acc, item: ThroughputResult, index: number, list: ThroughputResult[]) => {
-      if (index === 0) {
-        return acc.concat([item])
-      }
+  map((dates: Date[]) => ({ date: first(dates), count: dates.length })))
+const aggregateFillBy = (aggregateFillFn: (item: Date) => Date) => reduceWithAllArgs(
+  (acc, item: ThroughputResult, index: number, list: ThroughputResult[]) => {
+    if (index === 0) {
+      return acc.concat([item])
+    }
 
-      const items = acc
-      let previous = addOneWeek(list[index - 1].date)
-      while (previous < item.date) {
-        items.push({ date: previous, count: 0 })
-        previous = addOneWeek(previous)
-      }
-      items.push(item)
+    const items = acc
+    let previous = aggregateFillFn(list[index - 1].date)
+    while (previous < item.date) {
+      items.push({ date: previous, count: 0 })
+      previous = aggregateFillFn(previous)
+    }
+    items.push(item)
 
-      return items
-    },
-    [],
-  ),
+    return items
+  },
+  [],
 )
+const addDays = (numberOfDays: number) => (date: Date) => {
+  const newDate = new Date(date)
+  return new Date(newDate.setDate(newDate.getDate() + numberOfDays))
+}
+const addOneWeek = addDays(7)
+const addOneDay = addDays(1)
+const getThroughputByDay: (dates: Date[]) => Throughput = pipe(getThroughput,
+  aggregateFillBy(addOneDay)
+)
+const getThroughputByWeek = pipe(getThroughput, aggregateFillBy(addOneWeek))
 
-type Throughput = { date: Date; count: number }[]
+const createSampleDataSet = (n: number) => (data: any[]): any[] => {
+  return new Array(n).fill(null).map(() => sample(data))
+}
+const totalCount = pipe(map(get('count')), sum)
+const createSimulationIterations = (n: number) => (dataSet: any[]) => new Array(n).fill(dataSet)
+const createSimulationDistribution = (n: number, numberOfDays: number) => data => {
+  const dataSet = pipe(
+    createSimulationIterations(n),
+    map(createSampleDataSet(numberOfDays)),
+    map(totalCount),
+    groupBy(identity),
+    entries,
+  )(data)
 
-export { getWorkItemClosedDates, getThroughput }
+  return pipe(
+    map(([key, value]) => [parseInt(key, 10), (value.length / n)]),
+  )(dataSet)
+}
+
+const computeTotalProbability = pipe(
+  map(get(1)),
+  sum)
+const createForecastFromDistribution = pipe(
+  mapWithAllArgs(([numberOfItems], index, list) => [numberOfItems, (1 - computeTotalProbability(list.slice(0, index - 1))) * 100]),
+  sortBy(get(0)))
+
+export { getWorkItemClosedDates, getThroughputByDay, getThroughputByWeek, createSampleDataSet, createSimulationDistribution, createForecastFromDistribution }
 export type { Throughput }

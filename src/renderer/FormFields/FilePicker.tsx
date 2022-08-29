@@ -14,14 +14,14 @@ color: var(--text-color);
 width: 100%
 `
 
-const FilePicker = ({
+const FilePicker: React.FC<FormFieldComponentProps<string> & { accept: string }> = ({
   accept,
   onBlur,
   onChange,
   touched,
   value,
   valid,
-}: FormFieldComponentProps<string> & { accept: string }): JSX.Element => {
+}) => {
   const filePath = useRef<HTMLInputElement>()
   const handleFileSelection = useCallback(async (evt) => {
     onChange(evt, evt.target.files[0].path)
