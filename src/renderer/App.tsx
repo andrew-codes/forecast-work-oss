@@ -5,14 +5,16 @@ import {
   Main,
   usePageLayoutResize,
 } from "@atlaskit/page-layout"
+import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs"
 import { NavigationContent, SideNavigation } from "@atlaskit/side-navigation"
 import styled from "styled-components"
-import UploadConfiguration from "./configuration/UploadConfiguration"
 import { isEmpty, noop } from "lodash"
 import { AxisOptions, Chart } from "react-charts"
 import { Throughput } from "src/main/dataManiuplation"
 import { filter, get, last, pipe, toString } from "lodash/fp"
+import AdoConfiguration from "./configuration/AdoConfiguration"
 import NumericInput from "./FormFields/NumericInput"
+import UploadConfiguration from "./configuration/UploadConfiguration"
 
 const NavBorder = styled.div`
   --ds-surface: var(--side-bar-color);
@@ -31,7 +33,13 @@ const NavLayout = styled.div`
   > *:last-child {
     flex: 1;
   }
-  padding: 0 24px 24px;
+  padding: 0 4px 24px;
+`
+
+const Panel = styled.div`
+  margin-top: 8px;
+  padding: 16px 0;
+  width: 100%;
 `
 
 const MainContent = styled.div`
@@ -39,19 +47,19 @@ const MainContent = styled.div`
 `
 
 const FlexContainer = styled.div`
-display: flex;
-width: 100%;
+  display: flex;
+  width: 100%;
 `
 
 const Flex = styled.div<{ flex: number }>`
-flex: ${({ flex }) => flex};
-margin: 24px;
-align-self: center;
+  flex: ${({ flex }) => flex};
+  margin: 24px;
+  align-self: center;
 `
 
 const Bordered = styled.div`
-padding: 0 24px;
-border: 4px solid var(--border-color);
+  padding: 0 24px;
+  border: 4px solid var(--border-color);
 `
 
 const ChartContainer = styled.div`
@@ -71,15 +79,26 @@ const App = () => {
   }, [dataSets.forecast])
 
   const { collapseLeftSidebar, expandLeftSidebar } = usePageLayoutResize()
-  const handleSubmit = (evt, form) => {
-    electron.openCsvFile(form.fields.filePath.value).then((([results, throughput, distribution, forecast]) => {
-      collapseLeftSidebar()
+  const handleCsvConfigurationSubmission = (evt, form) => {
+    electron.openCsvDataSource(form.fields.filePath.value).then((([results, throughput, distribution, forecast]) => {
       setDataSets({ throughput, distribution, forecast })
     }))
   }
+
+  const handleAdoConfigurationSubmission = (evt, form) => {
+    electron.openAdoDataSource({ organizationName: form.fields.orgName.value, projectName: form.fields.projectName.value, accessToken: form.fields.adoPat.value }, { teamMemberIds: form.fields.teamMemberIds.split(',') }).then((([results, throughput, distribution, forecast]) => {
+      setDataSets({ throughput, distribution, forecast })
+    }))
+  }
+
   useEffect(() => {
     if (isEmpty(dataSets.throughput)) {
       expandLeftSidebar()
+    }
+  }, [dataSets])
+  useEffect(() => {
+    if (!isEmpty(dataSets.throughput)) {
+      collapseLeftSidebar()
     }
   }, [dataSets])
 
@@ -141,10 +160,21 @@ const App = () => {
             <NavLayout data-component="NavLayout">
               <NavigationContent>
                 <h2>Configuration</h2>
-                <UploadConfiguration
-                  id="uploadConfiguration"
-                  onSubmit={handleSubmit}
-                />
+                <h3>Data Source</h3>
+                <Tabs id="dataSourceTabs">
+                  <TabList>
+                    <Tab>ADO</Tab>
+                    <Tab>CSV</Tab>
+                  </TabList>
+                  <TabPanel>
+                    <Panel><AdoConfiguration id="adoConfiguration" onSubmit={handleAdoConfigurationSubmission} /></Panel>
+                  </TabPanel>
+                  <TabPanel>
+                    <Panel><UploadConfiguration
+                      id="uploadConfiguration"
+                      onSubmit={handleCsvConfigurationSubmission}
+                    /></Panel>
+                  </TabPanel></Tabs>
               </NavigationContent>
             </NavLayout>
           </SideNavigation>
@@ -159,7 +189,7 @@ const App = () => {
                 <h2>90 day Forecast</h2>
                 <FlexContainer>
                   <Flex flex={1}>
-                    <label>Confidence Level:
+                    <label>Target Confidence Level:
                       <NumericInput
                         onBlur={noop}
                         onChange={handleConfidenceLevelChange}
