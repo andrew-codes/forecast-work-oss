@@ -14,7 +14,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
 
   const validateRequired = useValidationRule<string>(
     "Required",
-    (field, fields) => field.value !== "",
+    (field, fields) => field.value != "",
   )
 
   const handleSubmit = React.useCallback<(evt: React.SyntheticEvent) => void>(
@@ -28,6 +28,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
       <Field
         fullWidth
         as={TextField}
+        defaultValue=""
         label="Organization Name"
         name="orgName"
         validate={validateRequired}
@@ -35,6 +36,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
       <Field
         fullWidth
         as={TextField}
+        defaultValue=""
         label="Project Name"
         name="projectName"
         validate={validateRequired}
@@ -42,6 +44,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
       <Field
         fullWidth
         as={PasswordField}
+        defaultValue=""
         label="Personal Access Token"
         name="adoPat"
         validate={validateRequired}
@@ -49,6 +52,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
       <Field
         fullWidth
         as={TextField}
+        defaultValue=""
         label="Team Member IDs"
         name="teamMemberIds"
         validate={validateRequired}

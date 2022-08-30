@@ -93,6 +93,10 @@ const Field = <TValue extends any, TRest extends object>({
     (values[name] as FieldType<TValue>) ??
     generateDefaultValue(name, defaultValue, !!validate)
 
+  useEffect(() => {
+    setValue(id, field)
+  }, [])
+
   const handleBlur = useCallback<EventHandler<SyntheticEvent>>(
     (evt) => {
       const newValue = merge({}, field, { touched: true })

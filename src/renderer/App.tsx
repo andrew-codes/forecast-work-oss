@@ -86,7 +86,7 @@ const App = () => {
   }
 
   const handleAdoConfigurationSubmission = (evt, form) => {
-    electron.openAdoDataSource({ organizationName: form.fields.orgName.value, projectName: form.fields.projectName.value, accessToken: form.fields.adoPat.value }, { teamMemberIds: form.fields.teamMemberIds.split(',') }).then((([results, throughput, distribution, forecast]) => {
+    electron.openAdoDataSource({ organizationName: form.fields.orgName.value, projectName: form.fields.projectName.value, accessToken: form.fields.adoPat.value }, { teamMemberIds: form.fields.teamMemberIds.value.split(',') }).then((([results, throughput, distribution, forecast]) => {
       setDataSets({ throughput, distribution, forecast })
     }))
   }

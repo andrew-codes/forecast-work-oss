@@ -15,7 +15,7 @@ const useForm: UseFormType = (id) => {
   const canSubmit =
     !isEmpty(fields) &&
     Object.values(fields).reduce((acc, field) => {
-      return acc && field.validity !== ValidityType.invalid
+      return acc && field.validity === ValidityType.valid
     }, true)
   const form = { canSubmit, fields }
   const submit = useCallback((evt) => {

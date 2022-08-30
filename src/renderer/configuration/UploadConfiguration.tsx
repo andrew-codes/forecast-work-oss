@@ -17,7 +17,7 @@ const UploadConfiguration: React.FC<ConfigurationFormProps> = ({
 
   const validateRequired = useValidationRule<string>(
     "Required",
-    (field, fields) => field.value !== "",
+    (field, fields) => field.value != "",
     "change",
   )
 
