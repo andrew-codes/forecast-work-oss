@@ -49,7 +49,7 @@ const Form: React.FC<FormProps> = ({ children, id, onReset, onSubmit }) => {
 
   return (
     <FormProvider id={id}>
-      <form>{children}</form>
+      <form data-test={id}>{children}</form>
     </FormProvider>
   )
 }
