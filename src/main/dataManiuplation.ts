@@ -1,21 +1,25 @@
-import { sample } from "lodash";
+import { sample } from "lodash"
 import {
+  chunk,
   cond,
   entries,
   every,
   first,
+  flatten,
   get,
   groupBy,
   identity,
   isEqual,
   map,
   pipe,
+  reduce,
   result,
   sortBy,
   stubTrue,
   sum,
   values,
 } from "lodash/fp"
+import fetch from "node-fetch"
 
 type Throughput = { date: Date; count: number }[]
 
@@ -40,9 +44,7 @@ type ThroughputResult = {
   date: Date
   count: number
 }
-const mapWithAllArgs = (iteratee) => (items) =>
-  items.map(iteratee)
-
+const mapWithAllArgs = (iteratee) => (items) => items.map(iteratee)
 
 const getThroughput: (dates: Date[]) => Throughput = pipe(
   sortBy(identity),
@@ -61,61 +63,99 @@ const getThroughput: (dates: Date[]) => Throughput = pipe(
   ),
   groupBy(identity),
   values,
-  map((dates: Date[]) => ({ date: first(dates), count: dates.length })))
-const aggregateFillBy = (aggregateFillFn: (item: Date) => Date) => reduceWithAllArgs(
-  (acc, item: ThroughputResult, index: number, list: ThroughputResult[]) => {
-    if (index === 0) {
-      return acc.concat([item])
-    }
-
-    const items = acc
-    let previous = aggregateFillFn(list[index - 1].date)
-    while (previous < item.date) {
-      items.push({ date: previous, count: 0 })
-      previous = aggregateFillFn(previous)
-    }
-    items.push(item)
-
-    return items
-  },
-  [],
+  map((dates: Date[]) => ({ date: first(dates), count: dates.length })),
 )
+const aggregateFillBy = (aggregateFillFn: (item: Date) => Date) =>
+  reduceWithAllArgs(
+    (acc, item: ThroughputResult, index: number, list: ThroughputResult[]) => {
+      if (index === 0) {
+        return acc.concat([item])
+      }
+
+      const items = acc
+      let previous = aggregateFillFn(list[index - 1].date)
+      while (previous < item.date) {
+        items.push({ date: previous, count: 0 })
+        previous = aggregateFillFn(previous)
+      }
+      items.push(item)
+
+      return items
+    },
+    [],
+  )
 const addDays = (numberOfDays: number) => (date: Date) => {
   const newDate = new Date(date)
   return new Date(newDate.setDate(newDate.getDate() + numberOfDays))
 }
 const addOneWeek = addDays(7)
 const addOneDay = addDays(1)
-const getThroughputByDay: (dates: Date[]) => Throughput = pipe(getThroughput,
-  aggregateFillBy(addOneDay)
+const getThroughputByDay: (dates: Date[]) => Throughput = pipe(
+  getThroughput,
+  aggregateFillBy(addOneDay),
 )
 const getThroughputByWeek = pipe(getThroughput, aggregateFillBy(addOneWeek))
 
-const createSampleDataSet = (n: number) => (data: any[]): any[] => {
-  return new Array(n).fill(null).map(() => sample(data))
-}
-const totalCount = pipe(map(get('count')), sum)
-const createSimulationIterations = (n: number) => (dataSet: any[]) => new Array(n).fill(dataSet)
-const createSimulationDistribution = (n: number, numberOfDays: number) => data => {
-  const dataSet = pipe(
-    createSimulationIterations(n),
-    map(createSampleDataSet(numberOfDays)),
-    map(totalCount),
-    groupBy(identity),
-    entries,
-  )(data)
+const createSampleDataSet =
+  (n: number) =>
+  (data: any[]): any[] => {
+    return new Array(n).fill(null).map(() => sample(data))
+  }
+const totalCount = pipe(map(get("count")), sum)
+const createSimulationIterations = (n: number) => (dataSet: any[]) =>
+  new Array(n).fill(dataSet)
+const createSimulationDistribution =
+  (n: number, numberOfDays: number) => (data) => {
+    const dataSet = pipe(
+      createSimulationIterations(n),
+      map(createSampleDataSet(numberOfDays)),
+      map(totalCount),
+      groupBy(identity),
+      entries,
+    )(data)
 
-  return pipe(
-    map(([key, value]) => [parseInt(key, 10), (value.length / n)]),
-  )(dataSet)
-}
+    return pipe(map(([key, value]) => [parseInt(key, 10), value.length / n]))(
+      dataSet,
+    )
+  }
 
-const computeTotalProbability = pipe(
-  map(get(1)),
-  sum)
+const computeTotalProbability = pipe(map(get(1)), sum)
 const createForecastFromDistribution = pipe(
-  mapWithAllArgs(([numberOfItems], index, list) => [numberOfItems, (1 - computeTotalProbability(list.slice(0, index - 1))) * 100]),
-  sortBy(get(0)))
+  mapWithAllArgs(([numberOfItems], index, list) => [
+    numberOfItems,
+    (1 - computeTotalProbability(list.slice(0, index - 1))) * 100,
+  ]),
+  sortBy(get(0)),
+)
 
-export { getWorkItemClosedDates, getThroughputByDay, getThroughputByWeek, createSampleDataSet, createSimulationDistribution, createForecastFromDistribution }
+const fetchWorkItemDetails = (adoUrl: URL, headers: {}) =>
+  pipe(
+    map(get("id")),
+    chunk(200),
+    reduce(
+      (acc, ids) =>
+        acc.concat([
+          fetch(adoUrl.toString(), {
+            headers,
+            method: "POST",
+            body: JSON.stringify({
+              ids,
+              errorPolicy: "Omit",
+              fields: ["Microsoft.VSTS.Common.ClosedDate"],
+            }),
+          }),
+        ]),
+      [],
+    ),
+  )
+
+export {
+  getWorkItemClosedDates,
+  getThroughputByDay,
+  getThroughputByWeek,
+  createSampleDataSet,
+  createSimulationDistribution,
+  createForecastFromDistribution,
+  fetchWorkItemDetails,
+}
 export type { Throughput }

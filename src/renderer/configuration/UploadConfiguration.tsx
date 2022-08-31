@@ -1,3 +1,4 @@
+import Button from '@atlaskit/button'
 import React, { useCallback } from "react"
 import { Form, Field, useForm, useValidationRule, FormType } from "../Form"
 import FilePicker from "../FormFields/FilePicker"
@@ -16,27 +17,22 @@ const UploadConfiguration: React.FC<ConfigurationFormProps> = ({
 
   const validateRequired = useValidationRule<string>(
     "Required",
-    (field, fields) => field.value !== "",
+    (field, fields) => field.value != "",
     "change",
   )
 
   return (
     <Form id={id} onSubmit={handleSubmit} onReset={handleReset}>
-      <fieldset>
-        <legend>
-          <h3>Historical Data</h3>
-        </legend>
-        <Field<string, { accept: string }>
-          fullWidth
-          accept="text/csv"
-          as={FilePicker}
-          defaultValue=""
-          label="CSV File"
-          name="filePath"
-          validate={validateRequired}
-        />
-      </fieldset>
-      <button type="button" disabled={!form.canSubmit} onClick={submit}>Start</button>
+      <Field<string, { accept: string }>
+        fullWidth
+        accept="text/csv"
+        as={FilePicker}
+        defaultValue=""
+        label="CSV File"
+        name="filePath"
+        validate={validateRequired}
+      />
+      <Button appearance="primary" isDisabled={!form.canSubmit} onClick={submit}>Start</Button>
     </Form>
   )
 }

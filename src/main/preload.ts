@@ -1,7 +1,10 @@
 import { contextBridge, ipcRenderer } from "electron"
+import { AdoConnection, AdoQueryValues } from "./AdoDataSourceTypes"
 console.log("preloaded!")
 
 contextBridge.exposeInMainWorld("electron", {
-  openCsvFile: (filePath: string) =>
+  openCsvDataSource: (filePath: string) =>
     ipcRenderer.invoke("cvsFileDataSet", { filePath }),
+  openAdoDataSource: (connection: AdoConnection, queryValues: AdoQueryValues) =>
+    ipcRenderer.invoke("adoDataSource", { connection, queryValues }),
 })

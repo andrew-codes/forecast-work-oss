@@ -26,11 +26,14 @@
     "test/unit/ci": "yarn test/unit"
   },
   "dependencies": {
+    "@atlaskit/button": "^16.3.6",
     "@atlaskit/page-layout": "^1.2.7",
     "@atlaskit/side-navigation": "^1.2.12",
-    "@fluentui/react": "^8.61.2",
+    "@atlaskit/tabs": "^13.2.13",
+    "@types/node-fetch": "^2.6.2",
     "fast-csv": "^4.3.6",
     "lodash": "^4.17.21",
+    "node-fetch": "^2.0.0",
     "react": "^17.0.2",
     "react-charts": "^3.0.0-beta.48",
     "react-dom": "^17.0.2",
