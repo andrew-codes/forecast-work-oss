@@ -1,7 +1,7 @@
-import Button from '@atlaskit/button'
+import Button from "@atlaskit/button"
 import React from "react"
 import { Form, Field, useForm, useValidationRule } from "../Form"
-import PasswordField from '../FormFields/PasswordField'
+import PasswordField from "../FormFields/PasswordField"
 import TextField from "../FormFields/TextField"
 import ConfigurationFormProps from "./ConfigurationFormProps"
 
@@ -9,8 +9,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
   id,
   onSubmit,
 }) => {
-  const [submit, reset, form] =
-    useForm(id)
+  const [submit, reset, form] = useForm(id)
 
   const validateRequired = useValidationRule<string>(
     "Required",
@@ -21,7 +20,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
     (evt) => onSubmit(evt, form),
     [form],
   )
-  const handleReset = React.useCallback(() => { }, [])
+  const handleReset = React.useCallback(() => {}, [])
 
   return (
     <Form id={id} onSubmit={handleSubmit} onReset={handleReset}>
@@ -43,6 +42,14 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
       />
       <Field
         fullWidth
+        as={TextField}
+        defaultValue=""
+        label="Username"
+        name="adoUsername"
+        validate={validateRequired}
+      />
+      <Field
+        fullWidth
         as={PasswordField}
         defaultValue=""
         label="Personal Access Token"
@@ -59,7 +66,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
       />
       <br />
       <Button
-        appearance='primary'
+        appearance="primary"
         isDisabled={!form.canSubmit}
         onClick={submit}
       >
