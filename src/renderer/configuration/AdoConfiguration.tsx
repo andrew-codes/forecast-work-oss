@@ -16,6 +16,17 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
     (field, fields) => field.value != "",
   )
 
+  const validateTeamMembers = useValidationRule<string>(
+    "Two or more team members are required",
+    (field, fields) => {
+      const members = field.value.split(",")
+      return (
+        members.length > 1 &&
+        members.reduce((acc, member) => acc && member !== "", true)
+      )
+    },
+  )
+
   const handleSubmit = React.useCallback<(evt: React.SyntheticEvent) => void>(
     (evt) => onSubmit(evt, form),
     [form],
@@ -62,7 +73,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
         defaultValue=""
         label="Team Member IDs"
         name="teamMemberIds"
-        validate={validateRequired}
+        validate={validateTeamMembers}
       />
       <br />
       <Button
