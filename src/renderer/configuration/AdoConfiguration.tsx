@@ -1,6 +1,6 @@
 import Button from "@atlaskit/button"
-import React from "react"
-import { Form, Field, useForm, useValidationRule } from "../Form"
+import React, { useCallback, useState } from "react"
+import { Form, Field, useForm, useValidationRule, ValidityType } from "../Form"
 import PasswordField from "../FormFields/PasswordField"
 import TextField from "../FormFields/TextField"
 import ConfigurationFormProps from "./ConfigurationFormProps"
@@ -27,6 +27,22 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
     },
   )
 
+  const [users, setUsers] = useState([])
+  console.log(users)
+  const queryTeamMembers = useCallback(
+    (evt) => {
+      if (
+        form.fields.orgName.validity !== ValidityType.valid ||
+        form.fields.projectName.validity !== ValidityType.valid ||
+        form.fields.adoUsername.validity !== ValidityType.valid ||
+        form.fields.adoPat.validity !== ValidityType.valid
+      ) {
+        return
+      }
+    },
+    [form],
+  )
+
   const handleSubmit = React.useCallback<(evt: React.SyntheticEvent) => void>(
     (evt) => onSubmit(evt, form),
     [form],
@@ -41,6 +57,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
         defaultValue=""
         label="Organization Name"
         name="orgName"
+        onBlur={queryTeamMembers}
         validate={validateRequired}
       />
       <Field
@@ -49,6 +66,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
         defaultValue=""
         label="Project Name"
         name="projectName"
+        onBlur={queryTeamMembers}
         validate={validateRequired}
       />
       <Field
@@ -57,6 +75,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
         defaultValue=""
         label="Username"
         name="adoUsername"
+        onBlur={queryTeamMembers}
         validate={validateRequired}
       />
       <Field
@@ -65,6 +84,7 @@ const AdoConfiguration: React.FC<ConfigurationFormProps> = ({
         defaultValue=""
         label="Personal Access Token"
         name="adoPat"
+        onBlur={queryTeamMembers}
         validate={validateRequired}
       />
       <Field
