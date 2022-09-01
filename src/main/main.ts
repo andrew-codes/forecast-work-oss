@@ -5,7 +5,7 @@ import { format } from "url"
 import { app, BrowserWindow, ipcMain, session } from "electron"
 import { is } from "electron-util"
 import { searchDevtools } from "electron-search-devtools"
-import fetch, { Headers } from "node-fetch"
+import fetch from "node-fetch"
 import {
   createForecastFromDistribution,
   createSimulationDistribution,
@@ -14,7 +14,7 @@ import {
   getThroughputByWeek,
   getWorkItemClosedDates,
 } from "./dataManiuplation"
-import { flatten, get, map, pipe, reduce, values } from "lodash/fp"
+import { get, map, pick, pipe, reduce } from "lodash/fp"
 import { AdoConnection, AdoQueryValues } from "./AdoDataSourceTypes"
 
 let win: BrowserWindow | null = null
@@ -83,6 +83,27 @@ async function createWindow() {
       const forecast = createForecastFromDistribution(dist)
 
       return [{ count, rows }, throughput, dist, forecast]
+    },
+  )
+
+  ipcMain.handle(
+    "fetchAdoUsers",
+    async (event, connection: AdoConnection & { teamId: string }) => {
+      const response = await fetch(
+        new URL(
+          `https://dev.azure.com/${connection.organizationName}/_apis/projects/${connection.projectName}/teams/${connection.teamId}/members?api-version=6.0-preview.1`,
+        ),
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Basic ${btoa(
+              `${connection.username}:${connection.accessToken}`,
+            )}`,
+          },
+        },
+      )
+      const results = await response.json()
+      return pipe(get("value"), map(pick(["displayName", "id"])))(results)
     },
   )
 
