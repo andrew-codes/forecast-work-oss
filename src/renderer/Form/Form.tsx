@@ -5,8 +5,14 @@ import React, {
   useContext,
   useEffect,
 } from "react"
+import styled from "styled-components"
 import { FormProvider } from "./FormProvider"
 import FormsContext from "./FormsContext"
+
+const StyledForm = styled.form`
+  display: flex;
+  flex: 1;
+`
 
 enum ValidityType {
   valid,
@@ -49,7 +55,7 @@ const Form: React.FC<FormProps> = ({ children, id, onReset, onSubmit }) => {
 
   return (
     <FormProvider id={id}>
-      <form data-test={id}>{children}</form>
+      <StyledForm data-test={id}>{children}</StyledForm>
     </FormProvider>
   )
 }

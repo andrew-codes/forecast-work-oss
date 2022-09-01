@@ -7,4 +7,6 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.invoke("cvsFileDataSet", { filePath }),
   openAdoDataSource: (connection: AdoConnection, queryValues: AdoQueryValues) =>
     ipcRenderer.invoke("adoDataSource", { connection, queryValues }),
+  fetchAdoUsers: (connection: AdoConnection & { teamId: string }) =>
+    ipcRenderer.invoke("fetchAdoUsers", connection),
 })

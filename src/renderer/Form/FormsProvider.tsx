@@ -46,15 +46,19 @@ const reducer = (
     case "register":
       return merge({}, state, { [action.payload.id]: {} })
     case "setOne":
-      return merge({}, state, {
+      const newState = merge({}, state, {
         [action.payload.id]: {
           [action.payload.value.name]: action.payload.value,
         },
       })
+      if (Array.isArray(action.payload.value.value)) {
+        newState[action.payload.id][action.payload.value.name].value =
+          action.payload.value
+      }
+
+      return newState
     case "setAll":
-      return merge({}, state, {
-        [action.payload.id]: action.payload.values,
-      })
+      return state
   }
 }
 

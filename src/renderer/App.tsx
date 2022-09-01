@@ -27,19 +27,30 @@ const NavLayout = styled.div`
   flex-direction: column;
   display: flex;
   background: var(--side-bar-color);
-  > * {
-    height: unset !important;
+  > *,
+  > * > *,
+  > * > * > * {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
   }
   > *:last-child {
     flex: 1;
   }
   padding: 0 4px 24px;
+
+  > *::after,
+  > * *::after {
+    content: none !important;
+  }
 `
 
 const Panel = styled.div`
   margin-top: 8px;
   padding: 16px 0;
   width: 100%;
+  flex: 1;
+  display: flex;
 `
 
 const MainContent = styled.div`
@@ -65,6 +76,10 @@ const Bordered = styled.div`
 const ChartContainer = styled.div`
   width: 100%;
   height: 300px;
+`
+
+const Heading = styled.h1`
+  margin-bottom: 0;
 `
 
 const getAnswer = (
@@ -187,8 +202,7 @@ const App = () => {
           <SideNavigation label="Configuration">
             <NavLayout data-component="NavLayout">
               <NavigationContent>
-                <h2>Configuration</h2>
-                <h3>Data Source</h3>
+                <Heading as="h2">Configuration</Heading>
                 <Tabs id="dataSourceTabs">
                   <TabList>
                     <Tab>ADO</Tab>
@@ -218,13 +232,13 @@ const App = () => {
       </NavBorder>
       <Main>
         <MainContent>
-          <h1>Work Forecasting Tool</h1>
+          <Heading>Work Forecasting Tool</Heading>
           {!isEmpty(dataSets.throughput) &&
             !isEmpty(dataSets.distribution) &&
             !isEmpty(dataSets.forecast) && (
               <>
                 <Bordered>
-                  <h2>90 day Forecast</h2>
+                  <Heading as="h2">90 day Forecast</Heading>
                   <FlexContainer>
                     <Flex flex={1}>
                       <label>
@@ -242,7 +256,7 @@ const App = () => {
                   </FlexContainer>
                 </Bordered>
                 <hr />
-                <h3>Throughput by Week</h3>
+                <Heading as="h3">Throughput by Week</Heading>
                 <ChartContainer data-test="WeeklyThroughputChart">
                   <Chart
                     options={{
@@ -258,7 +272,7 @@ const App = () => {
                     }}
                   />
                 </ChartContainer>
-                <h3>90 day Forecast Distribution</h3>
+                <Heading as="h3">90 day Forecast Distribution</Heading>
                 <ChartContainer>
                   <Chart
                     options={{
@@ -276,7 +290,7 @@ const App = () => {
                   />
                 </ChartContainer>
                 <ChartContainer>
-                  <h3>90 day Delivery Confidence</h3>
+                  <Heading as="h3">90 day Delivery Confidence</Heading>
                   <Chart
                     options={{
                       data: [

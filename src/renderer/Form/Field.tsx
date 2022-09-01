@@ -20,9 +20,7 @@ const Aligned = styled.div<AlignedProps>`
   display: flex;
   flex: 1;
   align-self: flex-start;
-  margin: 4px;
   width: ${({ fullWidth }) => (fullWidth ? `calc(100%)` : undefined)};
-  height: 1.25rem;
 `
 const FieldLabel = styled(Aligned)`
   color: var(--text-color);
@@ -81,8 +79,8 @@ const Field = <TValue extends any, TRest extends object>({
   name,
   fullWidth,
   label,
-  onBlur = (evt) => { },
-  onChange = (evt) => { },
+  onBlur = (evt) => {},
+  onChange = (evt) => {},
   validate,
   ...rest
 }: FieldPropTypes<TValue> & TRest): JSX.Element => {
@@ -115,9 +113,8 @@ const Field = <TValue extends any, TRest extends object>({
 
   const handleChange = useCallback<FieldEventHandlerType<TValue>>(
     (evt, v) => {
-      const newValue: FieldType<TValue> = merge({}, field, {
-        value: v,
-      })
+      const newValue: FieldType<TValue> = merge({}, field)
+      newValue.value = v
       let error = null
       if (!!validate) {
         error = validate(newValue, values, "change")
