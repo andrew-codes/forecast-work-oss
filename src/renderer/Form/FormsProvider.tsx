@@ -53,7 +53,7 @@ const reducer = (
       })
       if (Array.isArray(action.payload.value.value)) {
         newState[action.payload.id][action.payload.value.name].value =
-          action.payload.value
+          action.payload.value.value
       }
 
       return newState

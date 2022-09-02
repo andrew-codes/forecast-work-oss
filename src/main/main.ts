@@ -103,7 +103,14 @@ async function createWindow() {
         },
       )
       const results = await response.json()
-      return pipe(get("value"), map(pick(["displayName", "id"])))(results)
+      return pipe(
+        get("value"),
+        map(pick(["displayName", "uniqueName"])),
+        map((result) => ({
+          displayName: result.displayName,
+          id: result.uniqueName,
+        })),
+      )(results)
     },
   )
 
