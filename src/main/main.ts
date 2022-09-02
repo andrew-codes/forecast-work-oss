@@ -65,7 +65,7 @@ async function createWindow() {
         headers: true,
         renameHeaders: false,
       }
-      const [count, rows] = await new Promise((resolve) => {
+      const [count, rows]: number[] = await new Promise((resolve) => {
         const data = []
         parseStream(fileStream, options)
           .on("error", (error) => {
@@ -106,7 +106,7 @@ async function createWindow() {
       return pipe(
         get("value"),
         map(pick(["displayName", "uniqueName"])),
-        map((result) => ({
+        map((result: { displayName: string; uniqueName: string }) => ({
           displayName: result.displayName,
           id: result.uniqueName,
         })),
