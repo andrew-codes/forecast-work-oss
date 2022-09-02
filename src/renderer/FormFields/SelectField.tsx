@@ -11,11 +11,12 @@ const SelectField: React.FC<
   }
 > = ({ isMulti, options, onBlur, onChange, placeholder, value }) => (
   <Select
-    value={value.value}
+    value={value}
     isMulti={isMulti}
     options={options}
     onBlur={onBlur}
     onChange={(v: { label: string; value: string }[], action) => {
+      console.log("onChange", v)
       onChange(null, v)
     }}
     placeholder={placeholder}
