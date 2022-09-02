@@ -127,7 +127,7 @@ const App = () => {
           accessToken: form.fields.adoPat.value,
           username: form.fields.adoUsername.value,
         },
-        { teamMemberIds: form.fields.teamMemberIds.value.split(",") },
+        { teamMemberIds: form.fields.teamMemberIds.value.map(get("value")) },
       )
       .then(([results, throughput, distribution, forecast]) => {
         setDataSets({ throughput, distribution, forecast })
