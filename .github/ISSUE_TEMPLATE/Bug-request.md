@@ -10,5 +10,5 @@ assignees: ' '
 
 ### Describe the Issue
 
-Please describe the issue you ran into
+_Please describe the issue you ran into_
 
