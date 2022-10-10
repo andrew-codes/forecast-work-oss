@@ -27,3 +27,16 @@ These behaviours  are, however, considered unacceptable:
 - Unethical or unprofessional conduct.
 - Abuse of the reporting process to intentionally harass or exclude others.
 
+# Enforcement and reporting guidelines
+
+If you are subject to or witness unacceptable behaviour or have any other concerns, please notify one of the community maintainers or [Andrew Smith](https://github.com/andrew-codes) as soon as possible. We will review and investigate every complaint. We shall use our discretion to decide when and how to respond to reported incidents, with options ranging from taking no action to banning someone permanently from the project and spaces sponsored by the project. You should also know the community maintainer is obligated to maintain confidentiality concerning the reporter of an incident. 
+
+However, before taking further action, we will inform the accused of the report and give them a chance to speak about it. But in potentially dangerous situations, such as persistent harassment or threats to anyone's safety, we will take action without prior notice.
+
+This also applies to maintainers who do not follow the Code of Conduct. 
+
+## Attribution
+This Code of Conduct is adapted from the Contributor Covenant, version 1.4, 
+available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html.
+
+For answers to common questions about this code of conduct, see https://www.contributor-covenant.org/faq
