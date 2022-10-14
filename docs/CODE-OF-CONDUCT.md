@@ -60,6 +60,10 @@ This also applies to maintainers who do not follow the Code of Conduct.
 
 ## Attribution
 This Code of Conduct is adapted from the Contributor Covenant, version 1.4, 
+<<<<<<< HEAD
 available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html. 
+=======
+available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html.
+>>>>>>> 40fcda9 (Add code of conduct guidelines #78 (#80))
 
 For answers to common questions about this code of conduct, see https://www.contributor-covenant.org/faq
