@@ -2,8 +2,8 @@
 
 name: '🐞 Bug Report'
 about: ''
-title: '[BUG] What is wrong?'
-labels: ' '
+title: '[BUG]: What is wrong?'
+labels: ["bug", "triage"]
 assignees: ' '
 
 ---
