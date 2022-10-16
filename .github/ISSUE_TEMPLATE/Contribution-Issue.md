@@ -3,7 +3,7 @@
 name: 'Feature suggestion '
 about: ''
 title: '[feature] What will you like to see?
-labels: ' '
+labels: ["enhancement", "triage"]
 assignees: ' '
 
 ---
