@@ -54,6 +54,7 @@ test("Given a how many forecasting type with a CSV data source, when I set the n
   await firstWindow
     .locator('[data-component="Field"][data-test="forecastType"] label')
     .click()
+  await firstWindow.waitForTimeout(1500)
   await firstWindow
     .locator(
       '[data-component="Field"][data-test="filePath"] [data-test="FilePath"]',
