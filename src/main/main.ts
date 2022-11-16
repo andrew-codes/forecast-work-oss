@@ -136,7 +136,7 @@ async function createWindow() {
       const teamMemberIds = queryValues.teamMemberIds
         .map((id) => `'${id}'`)
         .join(",")
-      const query = `Select [System.Id], [Microsoft.VSTS.Common.ClosedDate] From WorkItems Where [System.WorkItemType] IN ('User Story','Bug') AND [State] = 'Closed' AND [Microsoft.VSTS.Common.ClosedDate] >= @StartOfDay('-180d') AND [Microsoft.VSTS.Common.ClosedBy] IN (${teamMemberIds})`
+      const query = `Select [System.Id], [Microsoft.VSTS.Common.ClosedDate] From WorkItems Where [System.WorkItemType] IN ('User Story','Bug') AND [State] = 'Closed' AND [Microsoft.VSTS.Common.ClosedDate] >= @StartOfDay('-100d') AND [Microsoft.VSTS.Common.ClosedBy] IN (${teamMemberIds})`
       const response = await fetch(wiqlUrl.toString(), {
         method: "POST",
         headers,
@@ -165,10 +165,10 @@ async function createWindow() {
         mapToFieldsOnly,
         throughputPerWeek,
       )(hydratedWorkItems)
-
+      console.log(hydratedWorkItems.length, hydratedWorkItems, throughput)
       dataSet = {
         count: hydratedWorkItems.length,
-        rows: hydratedWorkItems,
+        rows: pipe(mapToFieldsOnly)(hydratedWorkItems),
         throughput,
       }
     },

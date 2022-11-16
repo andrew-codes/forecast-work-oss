@@ -116,22 +116,18 @@ const App = () => {
 
   const handleFormSubmision = useCallback((evt, form) => {
     let loadDataSource
-    if (!!form.fields.filePath) {
+    if (!!form.fields.filePath.value) {
       loadDataSource = electron.openCsvDataSource(form.fields.filePath.value)
     } else {
-      loadDataSource = electron
-        .openAdoDataSource(
-          {
-            organizationName: form.fields.orgName.value,
-            projectName: form.fields.projectName.value,
-            accessToken: form.fields.adoPat.value,
-            username: form.fields.adoUsername.value,
-          },
-          { teamMemberIds: form.fields.teamMemberIds.value.map(get("value")) },
-        )
-        .then(([results, throughput, distribution, forecast]) => {
-          setDataSets({ throughput, distribution, forecast })
-        })
+      loadDataSource = electron.openAdoDataSource(
+        {
+          organizationName: form.fields.orgName.value,
+          projectName: form.fields.projectName.value,
+          accessToken: form.fields.adoPat.value,
+          username: form.fields.adoUsername.value,
+        },
+        { teamMemberIds: form.fields.teamMemberIds.value.map(get("value")) },
+      )
     }
     loadDataSource
       .then(() => electron.howMany(form.fields.numberOfDays.value))
