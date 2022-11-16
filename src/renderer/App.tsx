@@ -16,12 +16,16 @@ import {
   Form,
   useForm,
   useValidationRule,
+  ValidityType,
 } from "./Form"
 import Button from "@atlaskit/button"
 import FilePicker from "./FormFields/FilePicker"
 import RadioGroupField from "./FormFields/RadioGroupField"
 import TextField from "./FormFields/TextField"
 import { ChangeType, ValidationOutputType } from "./Form/useValidationRule"
+import PasswordField from "./FormFields/PasswordField"
+import SelectField from "./FormFields/SelectField"
+import VerticalSpacedGroup from "./VerticalSpacedGroup"
 
 const NavBorder = styled.div`
   --ds-surface: var(--side-bar-color);
@@ -69,6 +73,7 @@ const FlexContainer = styled.div<{ direction?: "row" | "column" }>`
   flex: 1;
   width: 100%;
   flex-direction: ${({ direction }) => direction ?? "column"};
+  margin: 0 8px;
 `
 
 const Flex = styled.div<{ flex: number }>`
@@ -89,11 +94,6 @@ const ChartContainer = styled.div`
 
 const Heading = styled.h1`
   margin-bottom: 0;
-`
-
-const Hr = styled.hr`
-  width: 100%;
-  flex: 1;
 `
 
 const getAnswer = (
@@ -234,6 +234,53 @@ const App = () => {
     (field, fields) => currentTabIndex !== 0 || field.value != "",
     "any",
   )
+  const validateTeamMembers = useValidationRule<
+    { label: string; value: string }[]
+  >("Two or more team members are required", (field, fields) => {
+    return (
+      currentTabIndex !== 1 ||
+      (field.value.length > 1 &&
+        field.value.reduce((acc, option) => acc && option.value !== "", true))
+    )
+  })
+
+  const validateHowManyRequired = useValidationRule<number>(
+    "Required",
+    (field, fields) => {
+      return fields.forecastType?.value === "howMany" && field.value > 0
+    },
+    "any",
+  )
+
+  const [users, setUsers] = useState([])
+  const queryTeamMembers = useCallback(
+    (evt) => {
+      if (
+        !isEmpty(users) ||
+        form.fields.orgName.validity !== ValidityType.valid ||
+        form.fields.projectName.validity !== ValidityType.valid ||
+        form.fields.teamName.validity !== ValidityType.valid ||
+        form.fields.adoUsername.validity !== ValidityType.valid ||
+        form.fields.adoPat.validity !== ValidityType.valid
+      ) {
+        return
+      }
+
+      electron
+        .fetchAdoUsers({
+          organizationName: form.fields.orgName.value,
+          projectName: form.fields.projectName.value,
+          accessToken: form.fields.adoPat.value,
+          teamId: form.fields.teamName.value,
+          username: form.fields.adoUsername.value,
+        })
+        .then((results) => {
+          setUsers(results)
+        })
+        .catch(console.error)
+    },
+    [form],
+  )
 
   return (
     <Content>
@@ -247,7 +294,7 @@ const App = () => {
               onReset={noop}
             >
               <FlexContainer direction="column">
-                <section>
+                <fieldset>
                   <Field
                     fullWidth
                     as={(props) => (
@@ -258,11 +305,11 @@ const App = () => {
                               "How many work items can be completed in a time frame?",
                             value: "howMany",
                           },
-                          {
-                            label:
-                              "How long will some number of work items take to complete?",
-                            value: "howLong",
-                          },
+                          // {
+                          //   label:
+                          //     "How long will some number of work items take to complete?",
+                          //   value: "howLong",
+                          // },
                         ]}
                         {...props}
                       />
@@ -273,9 +320,29 @@ const App = () => {
                     onBlur={noop}
                     validate={validateRequired}
                   />
-                </section>
-                <section>
-                  <Heading as="h3">Data Source</Heading>
+                </fieldset>
+                <br />
+
+                <fieldset>
+                  <legend>Question Configuration</legend>
+                  <VerticalSpacedGroup spaced={24}>
+                    {form.fields.forecastType?.value === "howMany" && (
+                      <Field
+                        fullWidth
+                        as={NumericInput}
+                        defaultValue={90}
+                        label="Number of Days to Forecast"
+                        name="numberOfDays"
+                        onBlur={noop}
+                        validate={validateHowManyRequired}
+                      />
+                    )}
+                  </VerticalSpacedGroup>
+                </fieldset>
+
+                <br />
+                <fieldset>
+                  <legend>Data Source</legend>
                   <Tabs id="dataSourceTabs" onChange={handleTabChange}>
                     <TabList>
                       <Tab>CSV</Tab>
@@ -296,20 +363,79 @@ const App = () => {
                     </TabPanel>
                     <TabPanel>
                       <Panel>
-                        <Field
-                          fullWidth
-                          as={TextField}
-                          defaultValue=""
-                          label="Organization Name"
-                          name="orgName"
-                          onBlur={noop}
-                          validate={validateAdoRequired}
-                        />
+                        <VerticalSpacedGroup spaced={24}>
+                          <Field
+                            fullWidth
+                            as={TextField}
+                            defaultValue=""
+                            label="Organization Name"
+                            name="orgName"
+                            onBlur={noop}
+                            validate={validateAdoRequired}
+                          />
+                          <Field
+                            fullWidth
+                            as={TextField}
+                            defaultValue=""
+                            label="Project Name"
+                            name="projectName"
+                            onBlur={queryTeamMembers}
+                            validate={validateAdoRequired}
+                          />
+                          <Field
+                            fullWidth
+                            as={TextField}
+                            defaultValue=""
+                            label="Team Name"
+                            name="teamName"
+                            onBlur={queryTeamMembers}
+                            validate={validateAdoRequired}
+                          />
+                          <Field
+                            fullWidth
+                            as={TextField}
+                            defaultValue=""
+                            label="Username"
+                            name="adoUsername"
+                            onBlur={queryTeamMembers}
+                            validate={validateAdoRequired}
+                          />
+                          <Field
+                            fullWidth
+                            as={PasswordField}
+                            defaultValue=""
+                            label="Personal Access Token"
+                            name="adoPat"
+                            onBlur={queryTeamMembers}
+                            validate={validateAdoRequired}
+                          />
+                          <Field<
+                            { label: string; value: string }[],
+                            {
+                              isMulti: boolean
+                              placeholder: string
+                              options: { label: string; value: string }[]
+                            }
+                          >
+                            fullWidth
+                            isMulti
+                            options={users.map((user) => ({
+                              label: user.displayName,
+                              value: user.id,
+                            }))}
+                            as={SelectField}
+                            defaultValue={[]}
+                            label="Team Members"
+                            name="teamMemberIds"
+                            placeholder="Choose users"
+                            validate={validateTeamMembers}
+                          />
+                        </VerticalSpacedGroup>
                       </Panel>
                     </TabPanel>
                   </Tabs>
-                </section>
-                <Hr />
+                </fieldset>
+                <br />
                 <section>
                   <Button
                     appearance="primary"

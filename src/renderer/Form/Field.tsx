@@ -106,6 +106,12 @@ const Field = <TValue extends any, TRest extends object>({
     (values[name] as FieldType<TValue>) ??
     generateDefaultValue(name, defaultValue, !!validate)
 
+  if (!values[name] && !!validate && !!defaultValue) {
+    const error = validate(field, values, "any")
+    field.error = error
+    field.validity = error === null ? ValidityType.valid : ValidityType.invalid
+  }
+
   useEffect(() => {
     setValue(id, field)
   }, [])
