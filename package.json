@@ -29,7 +29,6 @@
     "@atlaskit/button": "^16.3.6",
     "@atlaskit/page-layout": "^1.2.7",
     "@atlaskit/select": "^15.6.2",
-    "@atlaskit/side-navigation": "^1.2.12",
     "@atlaskit/tabs": "^13.2.13",
     "@types/node-fetch": "^2.6.2",
     "fast-csv": "^4.3.6",

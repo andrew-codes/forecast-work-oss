@@ -7,8 +7,8 @@ import React, {
   useEffect,
 } from "react"
 import styled from "styled-components"
-import { isEmpty, merge } from "lodash"
-import { FieldType, ValidityType } from "./Form"
+import { merge } from "lodash"
+import { FieldsType, FieldType, ValidityType } from "./Form"
 import FormContext from "./FormContext"
 import FormsContext from "./FormsContext"
 import { ValidationRuleType } from "./useValidationRule"
@@ -39,11 +39,12 @@ type FieldEventHandlerType<TValue> = (
 ) => void
 
 type FormFieldComponentProps<TValue> = {
+  name?: string
   onBlur: React.EventHandler<React.SyntheticEvent>
   onChange: FieldEventHandlerType<TValue>
-  value: TValue
   touched?: boolean
   valid?: ValidityType
+  value: TValue
 }
 
 interface FieldPropTypes<TValue> {
@@ -66,12 +67,26 @@ const generateDefaultValue: <TValue>(
   name,
   value: defaultValue,
   touched: false,
-  validity:
-    hasValidation && isEmpty(defaultValue)
-      ? ValidityType.invalid
-      : ValidityType.unknonwn,
+  validity: hasValidation ? ValidityType.unknonwn : ValidityType.valid,
   error: null,
 })
+
+const revalidate: <TValue>(
+  validate: ValidationRuleType<TValue>,
+) => (field: FieldType<TValue>, values: FieldsType) => FieldType<TValue> =
+  (validate) => (field, values) => {
+    if (!field) {
+      return
+    }
+    if (!!validate) {
+      const error = validate(field, values, "any")
+      field.validity = !!error ? ValidityType.invalid : ValidityType.valid
+    } else {
+      field.validity = ValidityType.valid
+    }
+
+    return field
+  }
 
 const Field = <TValue extends any, TRest extends object>({
   as,
@@ -84,16 +99,26 @@ const Field = <TValue extends any, TRest extends object>({
   validate,
   ...rest
 }: FieldPropTypes<TValue> & TRest): JSX.Element => {
-  const { getValues, setValue } = useContext(FormsContext)
+  const { getValues, setValue, registerRevalidate } = useContext(FormsContext)
   const id = useContext(FormContext)
   const values = getValues(id)
   const field =
     (values[name] as FieldType<TValue>) ??
     generateDefaultValue(name, defaultValue, !!validate)
 
+  if (!values[name] && !!validate && !!defaultValue) {
+    const error = validate(field, values, "any")
+    field.error = error
+    field.validity = error === null ? ValidityType.valid : ValidityType.invalid
+  }
+
   useEffect(() => {
     setValue(id, field)
   }, [])
+
+  useEffect(() => {
+    registerRevalidate(id, name, revalidate(validate))
+  }, [id, name, validate])
 
   const handleBlur = useCallback<EventHandler<SyntheticEvent>>(
     (evt) => {

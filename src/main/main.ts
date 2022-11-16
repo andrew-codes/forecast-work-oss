@@ -21,11 +21,14 @@ let win: BrowserWindow | null = null
 
 const throughputPerWeek = pipe(getWorkItemClosedDates, getThroughputByWeek)
 
-const distribution = pipe(
-  getWorkItemClosedDates,
-  getThroughputByDay,
-  createSimulationDistribution(12000, 90),
-)
+const createDistributionForNumberofDays = (numberOfDays: number) =>
+  pipe(
+    getWorkItemClosedDates,
+    getThroughputByDay,
+    createSimulationDistribution(12000, numberOfDays),
+  )
+
+let dataSet: { count: number; rows: any[]; throughput: any }
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -65,7 +68,7 @@ async function createWindow() {
         headers: true,
         renameHeaders: false,
       }
-      const [count, rows]: number[] = await new Promise((resolve) => {
+      const [count, rows]: [number, any] = await new Promise((resolve) => {
         const data = []
         parseStream(fileStream, options)
           .on("error", (error) => {
@@ -79,10 +82,7 @@ async function createWindow() {
           })
       })
       const throughput = throughputPerWeek(rows)
-      const dist = distribution(rows)
-      const forecast = createForecastFromDistribution(dist)
-
-      return [{ count, rows }, throughput, dist, forecast]
+      dataSet = { count, rows, throughput }
     },
   )
 
@@ -136,7 +136,7 @@ async function createWindow() {
       const teamMemberIds = queryValues.teamMemberIds
         .map((id) => `'${id}'`)
         .join(",")
-      const query = `Select [System.Id], [Microsoft.VSTS.Common.ClosedDate] From WorkItems Where [System.WorkItemType] IN ('User Story','Bug') AND [State] = 'Closed' AND [Microsoft.VSTS.Common.ClosedDate] >= @StartOfDay('-180d') AND [Microsoft.VSTS.Common.ClosedBy] IN (${teamMemberIds})`
+      const query = `Select [System.Id], [Microsoft.VSTS.Common.ClosedDate] From WorkItems Where [System.WorkItemType] IN ('User Story','Bug') AND [State] = 'Closed' AND [Microsoft.VSTS.Common.ClosedDate] >= @StartOfDay('-100d') AND [Microsoft.VSTS.Common.ClosedBy] IN (${teamMemberIds})`
       const response = await fetch(wiqlUrl.toString(), {
         method: "POST",
         headers,
@@ -165,16 +165,26 @@ async function createWindow() {
         mapToFieldsOnly,
         throughputPerWeek,
       )(hydratedWorkItems)
-      const dist = pipe(mapToFieldsOnly, distribution)(hydratedWorkItems)
-
-      return [
-        { count: hydratedWorkItems.length, rows: hydratedWorkItems },
+      console.log(hydratedWorkItems.length, hydratedWorkItems, throughput)
+      dataSet = {
+        count: hydratedWorkItems.length,
+        rows: pipe(mapToFieldsOnly)(hydratedWorkItems),
         throughput,
-        dist,
-        createForecastFromDistribution(dist),
-      ]
+      }
     },
   )
+
+  ipcMain.handle("howMany", async (event, numberOfDays: number) => {
+    const distributionForNDays = createDistributionForNumberofDays(numberOfDays)
+    const dist = distributionForNDays(dataSet.rows)
+    const forecast = createForecastFromDistribution(dist)
+    return [
+      { count: dataSet.count, rows: dataSet.rows },
+      dataSet.throughput,
+      dist,
+      forecast,
+    ]
+  })
 
   win.on("closed", () => {
     win = null
