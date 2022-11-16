@@ -279,242 +279,246 @@ const App = () => {
         <MainContent>
           <Heading>Work Forecasting Tool</Heading>
           <FlexContainer direction="row">
-            <Form
-              id={"configuration"}
-              onSubmit={handleFormSubmision}
-              onReset={noop}
-            >
-              <FlexContainer direction="column">
-                <fieldset>
-                  <Field
-                    fullWidth
-                    as={(props) => (
-                      <RadioGroupField
-                        options={[
-                          {
-                            label:
-                              "How many work items can be completed in a time frame?",
-                            value: "howMany",
-                          },
-                          // {
-                          //   label:
-                          //     "How long will some number of work items take to complete?",
-                          //   value: "howLong",
-                          // },
-                        ]}
-                        {...props}
-                      />
-                    )}
-                    defaultValue=""
-                    label="Forecasting Type"
-                    name="forecastType"
-                    onBlur={noop}
-                    validate={validateRequired}
-                  />
-                </fieldset>
-                <br />
-
-                <fieldset>
-                  <legend>Question Configuration</legend>
-                  <VerticalSpacedGroup spaced={24}>
-                    {form.fields.forecastType?.value === "howMany" && (
-                      <Field
-                        fullWidth
-                        as={NumericInput}
-                        defaultValue={90}
-                        label="Number of Days to Forecast"
-                        name="numberOfDays"
-                        onBlur={noop}
-                        validate={validateHowManyRequired}
-                      />
-                    )}
-                  </VerticalSpacedGroup>
-                </fieldset>
-
-                <br />
-                <fieldset>
-                  <legend>Data Source</legend>
-                  <Tabs id="dataSourceTabs" onChange={handleTabChange}>
-                    <TabList>
-                      <Tab>CSV</Tab>
-                      <Tab>ADO</Tab>
-                    </TabList>
-                    <TabPanel>
-                      <Panel>
-                        <Field<string, { accept: string }>
-                          fullWidth
-                          accept="text/csv"
-                          as={FilePicker}
-                          defaultValue=""
-                          label="CSV File"
-                          name="filePath"
-                          validate={validateCsvRequired}
+            <Flex flex={1}>
+              <Form
+                id={"configuration"}
+                onSubmit={handleFormSubmision}
+                onReset={noop}
+              >
+                <FlexContainer direction="column">
+                  <fieldset>
+                    <Field
+                      fullWidth
+                      as={(props) => (
+                        <RadioGroupField
+                          options={[
+                            {
+                              label:
+                                "How many work items can be completed in a time frame?",
+                              value: "howMany",
+                            },
+                            // {
+                            //   label:
+                            //     "How long will some number of work items take to complete?",
+                            //   value: "howLong",
+                            // },
+                          ]}
+                          {...props}
                         />
-                      </Panel>
-                    </TabPanel>
-                    <TabPanel>
-                      <Panel>
-                        <VerticalSpacedGroup spaced={24}>
-                          <Field
+                      )}
+                      defaultValue=""
+                      label="Forecasting Type"
+                      name="forecastType"
+                      onBlur={noop}
+                      validate={validateRequired}
+                    />
+                  </fieldset>
+                  <br />
+
+                  <fieldset>
+                    <legend>Question Configuration</legend>
+                    <VerticalSpacedGroup spaced={24}>
+                      {form.fields.forecastType?.value === "howMany" && (
+                        <Field
+                          fullWidth
+                          as={NumericInput}
+                          defaultValue={90}
+                          label="Number of Days to Forecast"
+                          name="numberOfDays"
+                          onBlur={noop}
+                          validate={validateHowManyRequired}
+                        />
+                      )}
+                    </VerticalSpacedGroup>
+                  </fieldset>
+
+                  <br />
+                  <fieldset>
+                    <legend>Data Source</legend>
+                    <Tabs id="dataSourceTabs" onChange={handleTabChange}>
+                      <TabList>
+                        <Tab>CSV</Tab>
+                        <Tab>ADO</Tab>
+                      </TabList>
+                      <TabPanel>
+                        <Panel>
+                          <Field<string, { accept: string }>
                             fullWidth
-                            as={TextField}
+                            accept="text/csv"
+                            as={FilePicker}
                             defaultValue=""
-                            label="Organization Name"
-                            name="orgName"
-                            onBlur={noop}
-                            validate={validateAdoRequired}
+                            label="CSV File"
+                            name="filePath"
+                            validate={validateCsvRequired}
                           />
-                          <Field
-                            fullWidth
-                            as={TextField}
-                            defaultValue=""
-                            label="Project Name"
-                            name="projectName"
-                            onBlur={queryTeamMembers}
-                            validate={validateAdoRequired}
-                          />
-                          <Field
-                            fullWidth
-                            as={TextField}
-                            defaultValue=""
-                            label="Team Name"
-                            name="teamName"
-                            onBlur={queryTeamMembers}
-                            validate={validateAdoRequired}
-                          />
-                          <Field
-                            fullWidth
-                            as={TextField}
-                            defaultValue=""
-                            label="Username"
-                            name="adoUsername"
-                            onBlur={queryTeamMembers}
-                            validate={validateAdoRequired}
-                          />
-                          <Field
-                            fullWidth
-                            as={PasswordField}
-                            defaultValue=""
-                            label="Personal Access Token"
-                            name="adoPat"
-                            onBlur={queryTeamMembers}
-                            validate={validateAdoRequired}
-                          />
-                          <Field<
-                            { label: string; value: string }[],
-                            {
-                              isMulti: boolean
-                              placeholder: string
-                              options: { label: string; value: string }[]
-                            }
-                          >
-                            fullWidth
-                            isMulti
-                            options={users.map((user) => ({
-                              label: user.displayName,
-                              value: user.id,
-                            }))}
-                            as={SelectField}
-                            defaultValue={[]}
-                            label="Team Members"
-                            name="teamMemberIds"
-                            placeholder="Choose users"
-                            validate={validateTeamMembers}
-                          />
-                        </VerticalSpacedGroup>
-                      </Panel>
-                    </TabPanel>
-                  </Tabs>
-                </fieldset>
-                <br />
-                <section>
-                  <Button
-                    appearance="primary"
-                    isDisabled={!form.canSubmit}
-                    onClick={submit}
-                  >
-                    Start
-                  </Button>
-                </section>
-              </FlexContainer>
-            </Form>
-            <FlexContainer direction="column">
-              {!isEmpty(dataSets.throughput) &&
-                !isEmpty(dataSets.distribution) &&
-                !isEmpty(dataSets.forecast) && (
-                  <>
-                    <Bordered>
-                      <Heading as="h2">90 day Forecast</Heading>
-                      <FlexContainer>
-                        <Flex flex={1}>
-                          <label>
-                            Target Confidence Level:
-                            <NumericInput
+                        </Panel>
+                      </TabPanel>
+                      <TabPanel>
+                        <Panel>
+                          <VerticalSpacedGroup spaced={24}>
+                            <Field
+                              fullWidth
+                              as={TextField}
+                              defaultValue=""
+                              label="Organization Name"
+                              name="orgName"
                               onBlur={noop}
-                              onChange={handleConfidenceLevelChange}
-                              value={confidenceLevel}
+                              validate={validateAdoRequired}
                             />
-                          </label>
-                        </Flex>
-                        <Flex flex={3}>
-                          Answer: <strong>{answer} work items</strong>
-                        </Flex>
-                      </FlexContainer>
-                    </Bordered>
-                    <hr />
-                    <Heading as="h3">Throughput by Week</Heading>
-                    <ChartContainer data-test="WeeklyThroughputChart">
-                      <Chart
-                        options={{
-                          data: [
-                            {
-                              label: "Weekly Throughput",
-                              data: dataSets.throughput,
-                            },
-                          ],
-                          dark: true,
-                          primaryAxis: throughputPrimaryAxis,
-                          secondaryAxes: throughputSecondaryAxes,
-                        }}
-                      />
-                    </ChartContainer>
-                    <Heading as="h3">90 day Forecast Distribution</Heading>
-                    <ChartContainer>
-                      <Chart
-                        options={{
-                          data: [
-                            {
-                              label: "90 day Forecast Distribution",
-                              data: dataSets.distribution,
-                            },
-                          ],
+                            <Field
+                              fullWidth
+                              as={TextField}
+                              defaultValue=""
+                              label="Project Name"
+                              name="projectName"
+                              onBlur={queryTeamMembers}
+                              validate={validateAdoRequired}
+                            />
+                            <Field
+                              fullWidth
+                              as={TextField}
+                              defaultValue=""
+                              label="Team Name"
+                              name="teamName"
+                              onBlur={queryTeamMembers}
+                              validate={validateAdoRequired}
+                            />
+                            <Field
+                              fullWidth
+                              as={TextField}
+                              defaultValue=""
+                              label="Username"
+                              name="adoUsername"
+                              onBlur={queryTeamMembers}
+                              validate={validateAdoRequired}
+                            />
+                            <Field
+                              fullWidth
+                              as={PasswordField}
+                              defaultValue=""
+                              label="Personal Access Token"
+                              name="adoPat"
+                              onBlur={queryTeamMembers}
+                              validate={validateAdoRequired}
+                            />
+                            <Field<
+                              { label: string; value: string }[],
+                              {
+                                isMulti: boolean
+                                placeholder: string
+                                options: { label: string; value: string }[]
+                              }
+                            >
+                              fullWidth
+                              isMulti
+                              options={users.map((user) => ({
+                                label: user.displayName,
+                                value: user.id,
+                              }))}
+                              as={SelectField}
+                              defaultValue={[]}
+                              label="Team Members"
+                              name="teamMemberIds"
+                              placeholder="Choose users"
+                              validate={validateTeamMembers}
+                            />
+                          </VerticalSpacedGroup>
+                        </Panel>
+                      </TabPanel>
+                    </Tabs>
+                  </fieldset>
+                  <br />
+                  <section>
+                    <Button
+                      appearance="primary"
+                      isDisabled={!form.canSubmit}
+                      onClick={submit}
+                    >
+                      Start
+                    </Button>
+                  </section>
+                </FlexContainer>
+              </Form>
+            </Flex>
+            <Flex flex={2}>
+              <FlexContainer direction="column">
+                {!isEmpty(dataSets.throughput) &&
+                  !isEmpty(dataSets.distribution) &&
+                  !isEmpty(dataSets.forecast) && (
+                    <>
+                      <Bordered>
+                        <Heading as="h2">90 day Forecast</Heading>
+                        <FlexContainer>
+                          <Flex flex={1}>
+                            <label>
+                              Target Confidence Level:
+                              <NumericInput
+                                onBlur={noop}
+                                onChange={handleConfidenceLevelChange}
+                                value={confidenceLevel}
+                              />
+                            </label>
+                          </Flex>
+                          <Flex flex={3}>
+                            Answer: <strong>{answer} work items</strong>
+                          </Flex>
+                        </FlexContainer>
+                      </Bordered>
+                      <hr />
+                      <Heading as="h3">Throughput by Week</Heading>
+                      <ChartContainer data-test="WeeklyThroughputChart">
+                        <Chart
+                          options={{
+                            data: [
+                              {
+                                label: "Weekly Throughput",
+                                data: dataSets.throughput,
+                              },
+                            ],
+                            dark: true,
+                            primaryAxis: throughputPrimaryAxis,
+                            secondaryAxes: throughputSecondaryAxes,
+                          }}
+                        />
+                      </ChartContainer>
+                      <Heading as="h3">90 day Forecast Distribution</Heading>
+                      <ChartContainer>
+                        <Chart
+                          options={{
+                            data: [
+                              {
+                                label: "90 day Forecast Distribution",
+                                data: dataSets.distribution,
+                              },
+                            ],
 
-                          dark: true,
-                          primaryAxis: distributionPrimaryAxis,
-                          secondaryAxes: distributionSecondaryAxes,
-                        }}
-                      />
-                    </ChartContainer>
-                    <ChartContainer>
-                      <Heading as="h3">90 day Delivery Confidence</Heading>
-                      <Chart
-                        options={{
-                          data: [
-                            {
-                              label: "90 day Forecast",
-                              data: dataSets.forecast,
-                            },
-                          ],
+                            dark: true,
+                            primaryAxis: distributionPrimaryAxis,
+                            secondaryAxes: distributionSecondaryAxes,
+                          }}
+                        />
+                      </ChartContainer>
+                      <ChartContainer>
+                        <Heading as="h3">90 day Delivery Confidence</Heading>
+                        <Chart
+                          options={{
+                            data: [
+                              {
+                                label: "90 day Forecast",
+                                data: dataSets.forecast,
+                              },
+                            ],
 
-                          dark: true,
-                          primaryAxis: forecastingPrimaryAxis,
-                          secondaryAxes: forecastingSecondaryAxes,
-                        }}
-                      />
-                    </ChartContainer>
-                  </>
-                )}
-            </FlexContainer>
+                            dark: true,
+                            primaryAxis: forecastingPrimaryAxis,
+                            secondaryAxes: forecastingSecondaryAxes,
+                          }}
+                        />
+                      </ChartContainer>
+                    </>
+                  )}
+              </FlexContainer>
+            </Flex>
           </FlexContainer>
         </MainContent>
       </Main>
