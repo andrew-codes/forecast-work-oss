@@ -21,6 +21,10 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
       - name: Install dependencies
         run: yarn
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+      - name: Install browser(s)
+        run: yarn playwright install --with-deps chromium
       - name: Download artifacts
         uses: actions/download-artifact@v2
         with:
