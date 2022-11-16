@@ -181,7 +181,6 @@ async function createWindow() {
   )
 
   ipcMain.handle("howMany", async (event, numberOfDays: number) => {
-    console.log(numberOfDays)
     const distributionForNDays = createDistributionForNumberofDays(numberOfDays)
     const dist = distributionForNDays(dataSet.rows)
     const forecast = createForecastFromDistribution(dist)
