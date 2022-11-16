@@ -6,23 +6,12 @@ import { isEmpty, noop } from "lodash"
 import { AxisOptions, Chart } from "react-charts"
 import { Throughput } from "src/main/dataManiuplation"
 import { filter, first, get, last, pipe, toString } from "lodash/fp"
-import AdoConfiguration from "./configuration/AdoConfiguration"
 import NumericInput from "./FormFields/NumericInput"
-import RadioField from "./FormFields/RadioGroupField"
-import {
-  Field,
-  FieldsType,
-  FieldType,
-  Form,
-  useForm,
-  useValidationRule,
-  ValidityType,
-} from "./Form"
+import { Field, Form, useForm, useValidationRule, ValidityType } from "./Form"
 import Button from "@atlaskit/button"
 import FilePicker from "./FormFields/FilePicker"
 import RadioGroupField from "./FormFields/RadioGroupField"
 import TextField from "./FormFields/TextField"
-import { ChangeType, ValidationOutputType } from "./Form/useValidationRule"
 import PasswordField from "./FormFields/PasswordField"
 import SelectField from "./FormFields/SelectField"
 import VerticalSpacedGroup from "./VerticalSpacedGroup"
@@ -126,14 +115,11 @@ const App = () => {
   const { collapseLeftSidebar, expandLeftSidebar } = usePageLayoutResize()
 
   const handleFormSubmision = useCallback((evt, form) => {
+    let loadDataSource
     if (!!form.fields.filePath) {
-      electron
-        .openCsvDataSource(form.fields.filePath.value)
-        .then(([results, throughput, distribution, forecast]) => {
-          setDataSets({ throughput, distribution, forecast })
-        })
+      loadDataSource = electron.openCsvDataSource(form.fields.filePath.value)
     } else {
-      electron
+      loadDataSource = electron
         .openAdoDataSource(
           {
             organizationName: form.fields.orgName.value,
@@ -147,6 +133,11 @@ const App = () => {
           setDataSets({ throughput, distribution, forecast })
         })
     }
+    loadDataSource
+      .then(() => electron.howMany(form.fields.numberOfDays.value))
+      .then(([results, throughput, distribution, forecast]) => {
+        setDataSets({ throughput, distribution, forecast })
+      })
   }, [])
 
   useEffect(() => {

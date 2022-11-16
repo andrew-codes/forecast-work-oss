@@ -28,7 +28,7 @@ const createDistributionForNumberofDays = (numberOfDays: number) =>
     createSimulationDistribution(12000, numberOfDays),
   )
 
-const distributionForNinetyDays = createDistributionForNumberofDays(90)
+let dataSet: { count: number; rows: any[]; throughput: any }
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -84,8 +84,7 @@ async function createWindow() {
       const throughput = throughputPerWeek(rows)
       const dist = distributionForNinetyDays(rows)
       const forecast = createForecastFromDistribution(dist)
-
-      return [{ count, rows }, throughput, dist, forecast]
+      dataSet = { count, rows, throughput }
     },
   )
 
@@ -173,14 +172,26 @@ async function createWindow() {
         distributionForNinetyDays,
       )(hydratedWorkItems)
 
-      return [
-        { count: hydratedWorkItems.length, rows: hydratedWorkItems },
+      dataSet = {
+        count: hydratedWorkItems.length,
+        rows: hydratedWorkItems,
         throughput,
-        dist,
-        createForecastFromDistribution(dist),
-      ]
+      }
     },
   )
+
+  ipcMain.handle("howMany", async (event, numberOfDays: number) => {
+    console.log(numberOfDays)
+    const distributionForNDays = createDistributionForNumberofDays(numberOfDays)
+    const dist = distributionForNDays(dataSet.rows)
+    const forecast = createForecastFromDistribution(dist)
+    return [
+      { count: dataSet.count, rows: dataSet.rows },
+      dataSet.throughput,
+      dist,
+      forecast,
+    ]
+  })
 
   win.on("closed", () => {
     win = null

@@ -9,4 +9,6 @@ contextBridge.exposeInMainWorld("electron", {
     ipcRenderer.invoke("adoDataSource", { connection, queryValues }),
   fetchAdoUsers: (connection: AdoConnection & { teamId: string }) =>
     ipcRenderer.invoke("fetchAdoUsers", connection),
+  howMany: (numberOfDays: number) =>
+    ipcRenderer.invoke("howMany", numberOfDays),
 })
