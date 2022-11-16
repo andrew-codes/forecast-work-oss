@@ -58,7 +58,7 @@ const reducer = (
 
       return newState
     case "setAll":
-      return state
+      return merge({}, state, { [action.payload.id]: action.payload.values })
   }
 }
 
@@ -131,14 +131,31 @@ const FormsProvider: React.FC<FormsProviderProps> = ({ children }) => {
     },
     [eventHandlers, setEventHandlers],
   )
+
+  const [validations, setValidations] = useState({})
+  const registerRevalidate = useCallback(
+    (id, name, validate) => {
+      setValidations(merge(validations, { [id]: { [name]: validate } }))
+    },
+    [validations],
+  )
+  const getValidations = useCallback(
+    (id) => {
+      return validations[id]
+    },
+    [validations],
+  )
+
   const ctxValue = useMemo(
     () => ({
       eventHandlers,
       forms,
       getHandlers,
+      getValidations,
       getValues,
       registerEventHandlers,
       registerForm,
+      registerRevalidate,
       setValue,
       setValues,
     }),

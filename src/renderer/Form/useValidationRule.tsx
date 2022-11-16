@@ -8,7 +8,7 @@ type ValidateType<TValue> = (
   values: FieldsType,
 ) => boolean
 type ValidationRuleType<TValue> = (
-  value: FieldType<TValue>,
+  value: Omit<FieldType<TValue>, "revalidate">,
   values: FieldsType,
   changeType: ChangeType,
 ) => ValidationOutputType

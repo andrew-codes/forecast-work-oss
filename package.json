@@ -28,6 +28,7 @@
   "dependencies": {
     "@atlaskit/button": "^16.3.6",
     "@atlaskit/page-layout": "^1.2.7",
+    "@atlaskit/radio": "^5.4.2",
     "@atlaskit/select": "^15.6.2",
     "@atlaskit/side-navigation": "^1.2.12",
     "@atlaskit/tabs": "^13.2.13",

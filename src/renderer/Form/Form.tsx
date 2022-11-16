@@ -8,6 +8,7 @@ import React, {
 import styled from "styled-components"
 import { FormProvider } from "./FormProvider"
 import FormsContext from "./FormsContext"
+import { ValidationRuleType } from "./useValidationRule"
 
 const StyledForm = styled.form`
   display: flex;
@@ -31,6 +32,7 @@ type FieldsType = Record<string, FieldType<any>>
 type FormType = {
   canSubmit: boolean
   fields: FieldsType
+  revalidate: () => void
 }
 
 type FormProps = {

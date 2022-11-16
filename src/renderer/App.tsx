@@ -1,12 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react"
-import {
-  Content,
-  LeftSidebar,
-  Main,
-  usePageLayoutResize,
-} from "@atlaskit/page-layout"
+import { Content, Main, usePageLayoutResize } from "@atlaskit/page-layout"
 import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs"
-import { NavigationContent, SideNavigation } from "@atlaskit/side-navigation"
 import styled from "styled-components"
 import { isEmpty, noop } from "lodash"
 import { AxisOptions, Chart } from "react-charts"
@@ -14,7 +8,20 @@ import { Throughput } from "src/main/dataManiuplation"
 import { filter, first, get, last, pipe, toString } from "lodash/fp"
 import AdoConfiguration from "./configuration/AdoConfiguration"
 import NumericInput from "./FormFields/NumericInput"
-import UploadConfiguration from "./configuration/UploadConfiguration"
+import RadioField from "./FormFields/RadioGroupField"
+import {
+  Field,
+  FieldsType,
+  FieldType,
+  Form,
+  useForm,
+  useValidationRule,
+} from "./Form"
+import Button from "@atlaskit/button"
+import FilePicker from "./FormFields/FilePicker"
+import RadioGroupField from "./FormFields/RadioGroupField"
+import TextField from "./FormFields/TextField"
+import { ChangeType, ValidationOutputType } from "./Form/useValidationRule"
 
 const NavBorder = styled.div`
   --ds-surface: var(--side-bar-color);
@@ -57,9 +64,11 @@ const MainContent = styled.div`
   padding: 40px;
 `
 
-const FlexContainer = styled.div`
+const FlexContainer = styled.div<{ direction?: "row" | "column" }>`
   display: flex;
+  flex: 1;
   width: 100%;
+  flex-direction: ${({ direction }) => direction ?? "column"};
 `
 
 const Flex = styled.div<{ flex: number }>`
@@ -80,6 +89,11 @@ const ChartContainer = styled.div`
 
 const Heading = styled.h1`
   margin-bottom: 0;
+`
+
+const Hr = styled.hr`
+  width: 100%;
+  flex: 1;
 `
 
 const getAnswer = (
@@ -110,29 +124,30 @@ const App = () => {
   )
 
   const { collapseLeftSidebar, expandLeftSidebar } = usePageLayoutResize()
-  const handleCsvConfigurationSubmission = (evt, form) => {
-    electron
-      .openCsvDataSource(form.fields.filePath.value)
-      .then(([results, throughput, distribution, forecast]) => {
-        setDataSets({ throughput, distribution, forecast })
-      })
-  }
 
-  const handleAdoConfigurationSubmission = (evt, form) => {
-    electron
-      .openAdoDataSource(
-        {
-          organizationName: form.fields.orgName.value,
-          projectName: form.fields.projectName.value,
-          accessToken: form.fields.adoPat.value,
-          username: form.fields.adoUsername.value,
-        },
-        { teamMemberIds: form.fields.teamMemberIds.value.map(get("value")) },
-      )
-      .then(([results, throughput, distribution, forecast]) => {
-        setDataSets({ throughput, distribution, forecast })
-      })
-  }
+  const handleFormSubmision = useCallback((evt, form) => {
+    if (!!form.fields.filePath) {
+      electron
+        .openCsvDataSource(form.fields.filePath.value)
+        .then(([results, throughput, distribution, forecast]) => {
+          setDataSets({ throughput, distribution, forecast })
+        })
+    } else {
+      electron
+        .openAdoDataSource(
+          {
+            organizationName: form.fields.orgName.value,
+            projectName: form.fields.projectName.value,
+            accessToken: form.fields.adoPat.value,
+            username: form.fields.adoUsername.value,
+          },
+          { teamMemberIds: form.fields.teamMemberIds.value.map(get("value")) },
+        )
+        .then(([results, throughput, distribution, forecast]) => {
+          setDataSets({ throughput, distribution, forecast })
+        })
+    }
+  }, [])
 
   useEffect(() => {
     if (isEmpty(dataSets.throughput)) {
@@ -195,116 +210,195 @@ const App = () => {
     [],
   )
 
+  const [submit, reset, form] = useForm("configuration")
+  const [currentTabIndex, setCurrentTabIndex] = useState(0)
+  const handleTabChange = useCallback((index) => {
+    setCurrentTabIndex(index)
+  }, [])
+  useEffect(() => {
+    form.revalidate()
+  }, [currentTabIndex])
+
+  const validateRequired = useValidationRule<string>(
+    "Required",
+    (field, fields) => field.value != "",
+    "any",
+  )
+  const validateAdoRequired = useValidationRule<string>(
+    "Required",
+    (field, fields) => currentTabIndex !== 1 || field.value != "",
+    "any",
+  )
+  const validateCsvRequired = useValidationRule<string>(
+    "Required",
+    (field, fields) => currentTabIndex !== 0 || field.value != "",
+    "any",
+  )
+
   return (
     <Content>
-      <NavBorder>
-        <LeftSidebar>
-          <SideNavigation label="Configuration">
-            <NavLayout data-component="NavLayout">
-              <NavigationContent>
-                <Heading as="h2">Configuration</Heading>
-                <Tabs id="dataSourceTabs">
-                  <TabList>
-                    <Tab>ADO</Tab>
-                    <Tab>CSV</Tab>
-                  </TabList>
-                  <TabPanel>
-                    <Panel>
-                      <AdoConfiguration
-                        id="adoConfiguration"
-                        onSubmit={handleAdoConfigurationSubmission}
-                      />
-                    </Panel>
-                  </TabPanel>
-                  <TabPanel>
-                    <Panel>
-                      <UploadConfiguration
-                        id="uploadConfiguration"
-                        onSubmit={handleCsvConfigurationSubmission}
-                      />
-                    </Panel>
-                  </TabPanel>
-                </Tabs>
-              </NavigationContent>
-            </NavLayout>
-          </SideNavigation>
-        </LeftSidebar>
-      </NavBorder>
       <Main>
         <MainContent>
           <Heading>Work Forecasting Tool</Heading>
-          {!isEmpty(dataSets.throughput) &&
-            !isEmpty(dataSets.distribution) &&
-            !isEmpty(dataSets.forecast) && (
-              <>
-                <Bordered>
-                  <Heading as="h2">90 day Forecast</Heading>
-                  <FlexContainer>
-                    <Flex flex={1}>
-                      <label>
-                        Target Confidence Level:
-                        <NumericInput
-                          onBlur={noop}
-                          onChange={handleConfidenceLevelChange}
-                          value={confidenceLevel}
+          <FlexContainer direction="row">
+            <Form
+              id={"configuration"}
+              onSubmit={handleFormSubmision}
+              onReset={noop}
+            >
+              <FlexContainer direction="column">
+                <section>
+                  <Field
+                    fullWidth
+                    as={(props) => (
+                      <RadioGroupField
+                        options={[
+                          {
+                            label:
+                              "How many work items can be completed in a time frame?",
+                            value: "howMany",
+                          },
+                          {
+                            label:
+                              "How long will some number of work items take to complete?",
+                            value: "howLong",
+                          },
+                        ]}
+                        {...props}
+                      />
+                    )}
+                    defaultValue=""
+                    label="Forecasting Type"
+                    name="forecastType"
+                    onBlur={noop}
+                    validate={validateRequired}
+                  />
+                </section>
+                <section>
+                  <Heading as="h3">Data Source</Heading>
+                  <Tabs id="dataSourceTabs" onChange={handleTabChange}>
+                    <TabList>
+                      <Tab>CSV</Tab>
+                      <Tab>ADO</Tab>
+                    </TabList>
+                    <TabPanel>
+                      <Panel>
+                        <Field<string, { accept: string }>
+                          fullWidth
+                          accept="text/csv"
+                          as={FilePicker}
+                          defaultValue=""
+                          label="CSV File"
+                          name="filePath"
+                          validate={validateCsvRequired}
                         />
-                      </label>
-                    </Flex>
-                    <Flex flex={3}>
-                      Answer: <strong>{answer} work items</strong>
-                    </Flex>
-                  </FlexContainer>
-                </Bordered>
-                <hr />
-                <Heading as="h3">Throughput by Week</Heading>
-                <ChartContainer data-test="WeeklyThroughputChart">
-                  <Chart
-                    options={{
-                      data: [
-                        {
-                          label: "Weekly Throughput",
-                          data: dataSets.throughput,
-                        },
-                      ],
-                      dark: true,
-                      primaryAxis: throughputPrimaryAxis,
-                      secondaryAxes: throughputSecondaryAxes,
-                    }}
-                  />
-                </ChartContainer>
-                <Heading as="h3">90 day Forecast Distribution</Heading>
-                <ChartContainer>
-                  <Chart
-                    options={{
-                      data: [
-                        {
-                          label: "90 day Forecast Distribution",
-                          data: dataSets.distribution,
-                        },
-                      ],
+                      </Panel>
+                    </TabPanel>
+                    <TabPanel>
+                      <Panel>
+                        <Field
+                          fullWidth
+                          as={TextField}
+                          defaultValue=""
+                          label="Organization Name"
+                          name="orgName"
+                          onBlur={noop}
+                          validate={validateAdoRequired}
+                        />
+                      </Panel>
+                    </TabPanel>
+                  </Tabs>
+                </section>
+                <Hr />
+                <section>
+                  <Button
+                    appearance="primary"
+                    isDisabled={!form.canSubmit}
+                    onClick={submit}
+                  >
+                    Start
+                  </Button>
+                </section>
+              </FlexContainer>
+            </Form>
+            <FlexContainer direction="column">
+              {!isEmpty(dataSets.throughput) &&
+                !isEmpty(dataSets.distribution) &&
+                !isEmpty(dataSets.forecast) && (
+                  <>
+                    <Bordered>
+                      <Heading as="h2">90 day Forecast</Heading>
+                      <FlexContainer>
+                        <Flex flex={1}>
+                          <label>
+                            Target Confidence Level:
+                            <NumericInput
+                              onBlur={noop}
+                              onChange={handleConfidenceLevelChange}
+                              value={confidenceLevel}
+                            />
+                          </label>
+                        </Flex>
+                        <Flex flex={3}>
+                          Answer: <strong>{answer} work items</strong>
+                        </Flex>
+                      </FlexContainer>
+                    </Bordered>
+                    <hr />
+                    <Heading as="h3">Throughput by Week</Heading>
+                    <ChartContainer data-test="WeeklyThroughputChart">
+                      <Chart
+                        options={{
+                          data: [
+                            {
+                              label: "Weekly Throughput",
+                              data: dataSets.throughput,
+                            },
+                          ],
+                          dark: true,
+                          primaryAxis: throughputPrimaryAxis,
+                          secondaryAxes: throughputSecondaryAxes,
+                        }}
+                      />
+                    </ChartContainer>
+                    <Heading as="h3">90 day Forecast Distribution</Heading>
+                    <ChartContainer>
+                      <Chart
+                        options={{
+                          data: [
+                            {
+                              label: "90 day Forecast Distribution",
+                              data: dataSets.distribution,
+                            },
+                          ],
 
-                      dark: true,
-                      primaryAxis: distributionPrimaryAxis,
-                      secondaryAxes: distributionSecondaryAxes,
-                    }}
-                  />
-                </ChartContainer>
-                <ChartContainer>
-                  <Heading as="h3">90 day Delivery Confidence</Heading>
-                  <Chart
-                    options={{
-                      data: [
-                        { label: "90 day Forecast", data: dataSets.forecast },
-                      ],
+                          dark: true,
+                          primaryAxis: distributionPrimaryAxis,
+                          secondaryAxes: distributionSecondaryAxes,
+                        }}
+                      />
+                    </ChartContainer>
+                    <ChartContainer>
+                      <Heading as="h3">90 day Delivery Confidence</Heading>
+                      <Chart
+                        options={{
+                          data: [
+                            {
+                              label: "90 day Forecast",
+                              data: dataSets.forecast,
+                            },
+                          ],
 
-                      dark: true,
-                      primaryAxis: forecastingPrimaryAxis,
-                      secondaryAxes: forecastingSecondaryAxes,
-                    }}
-                  />
-                </ChartContainer>
-              </>
-            )}
+                          dark: true,
+                          primaryAxis: forecastingPrimaryAxis,
+                          secondaryAxes: forecastingSecondaryAxes,
+                        }}
+                      />
+                    </ChartContainer>
+                  </>
+                )}
+            </FlexContainer>
+          </FlexContainer>
         </MainContent>
       </Main>
     </Content>

@@ -21,11 +21,14 @@ let win: BrowserWindow | null = null
 
 const throughputPerWeek = pipe(getWorkItemClosedDates, getThroughputByWeek)
 
-const distribution = pipe(
-  getWorkItemClosedDates,
-  getThroughputByDay,
-  createSimulationDistribution(12000, 90),
-)
+const createDistributionForNumberofDays = (numberOfDays: number) =>
+  pipe(
+    getWorkItemClosedDates,
+    getThroughputByDay,
+    createSimulationDistribution(12000, numberOfDays),
+  )
+
+const distributionForNinetyDays = createDistributionForNumberofDays(90)
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -79,7 +82,7 @@ async function createWindow() {
           })
       })
       const throughput = throughputPerWeek(rows)
-      const dist = distribution(rows)
+      const dist = distributionForNinetyDays(rows)
       const forecast = createForecastFromDistribution(dist)
 
       return [{ count, rows }, throughput, dist, forecast]
@@ -165,7 +168,10 @@ async function createWindow() {
         mapToFieldsOnly,
         throughputPerWeek,
       )(hydratedWorkItems)
-      const dist = pipe(mapToFieldsOnly, distribution)(hydratedWorkItems)
+      const dist = pipe(
+        mapToFieldsOnly,
+        distributionForNinetyDays,
+      )(hydratedWorkItems)
 
       return [
         { count: hydratedWorkItems.length, rows: hydratedWorkItems },
