@@ -68,7 +68,7 @@ async function createWindow() {
         headers: true,
         renameHeaders: false,
       }
-      const [count, rows]: number[] = await new Promise((resolve) => {
+      const [count, rows]: [number, any] = await new Promise((resolve) => {
         const data = []
         parseStream(fileStream, options)
           .on("error", (error) => {
@@ -82,8 +82,6 @@ async function createWindow() {
           })
       })
       const throughput = throughputPerWeek(rows)
-      const dist = distributionForNinetyDays(rows)
-      const forecast = createForecastFromDistribution(dist)
       dataSet = { count, rows, throughput }
     },
   )
@@ -166,10 +164,6 @@ async function createWindow() {
       const throughput = pipe(
         mapToFieldsOnly,
         throughputPerWeek,
-      )(hydratedWorkItems)
-      const dist = pipe(
-        mapToFieldsOnly,
-        distributionForNinetyDays,
       )(hydratedWorkItems)
 
       dataSet = {
