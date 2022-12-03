@@ -442,7 +442,7 @@ const App = () => {
                   !isEmpty(dataSets.distribution) &&
                   !isEmpty(dataSets.forecast) && (
                     <>
-                      <Bordered>
+                      <Bordered data-test="forecastAnswer">
                         <Heading as="h2">90 day Forecast</Heading>
                         <FlexContainer>
                           <Flex flex={1}>

@@ -82,7 +82,7 @@ test("Given a how many forecasting type with a CSV data source, when I set the n
   ).toEqual(true)
 })
 
-test("Given a how many forecasting type, the default of 90 days, and a valid CSV data source, when I start the forecast, then the forecast is computed and shown to the user.", async ({
+test.only("Given a how many forecasting type, the default of 90 days, and a valid CSV data source, when I start the forecast, then the forecast is computed and shown to the user.", async ({
   electronApp,
 }) => {
   const firstWindow = await electronApp.firstWindow()
@@ -107,9 +107,7 @@ test("Given a how many forecasting type, the default of 90 days, and a valid CSV
     })
     .click()
   await firstWindow.waitForTimeout(1500)
-  expect(
-    await firstWindow
-      .locator('[data-test="WeeklyThroughputChart"]')
-      .screenshot(),
-  ).toMatchSnapshot("weekly-throughput-chart.png")
+  await expect(
+    firstWindow.locator('[data-test="forecastAnswer"] div > strong'),
+  ).toHaveText(/^[78][0-9] work items$/)
 })
