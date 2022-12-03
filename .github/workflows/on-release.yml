@@ -21,7 +21,7 @@ jobs:
     uses: andrew-codes/forecast-work/.github/workflows/package.yml@main
 
   publish:
-    needs: [package, lint_and_test]
+    needs: [e2e, package, lint_and_test]
     uses: andrew-codes/forecast-work/.github/workflows/publish.yml@main
 
   publish_changelog:

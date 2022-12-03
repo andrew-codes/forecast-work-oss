@@ -35,8 +35,8 @@ test("Given a how many forecasting type with a CSV data source and I have not se
 }) => {
   const firstWindow = await electronApp.firstWindow()
   await firstWindow
-    .locator('[data-component="Field"][data-test="forecastType"] label')
-    .click()
+    .locator('[data-component="Field"][data-test="forecastType"] label input')
+    .check()
   await firstWindow.locator('[role="tablist"] div', { hasText: "CSV" }).click()
   expect(
     await firstWindow
@@ -52,8 +52,8 @@ test("Given a how many forecasting type with a CSV data source, when I set the n
 }) => {
   const firstWindow = await electronApp.firstWindow()
   await firstWindow
-    .locator('[data-component="Field"][data-test="forecastType"] label')
-    .click()
+    .locator('[data-component="Field"][data-test="forecastType"] label input')
+    .check()
   await firstWindow.waitForTimeout(1500)
   await firstWindow
     .locator(
@@ -87,8 +87,8 @@ test("Given a how many forecasting type, the default of 90 days, and a valid CSV
 }) => {
   const firstWindow = await electronApp.firstWindow()
   await firstWindow
-    .locator('[data-component="Field"][data-test="forecastType"] label')
-    .click()
+    .locator('[data-component="Field"][data-test="forecastType"] label input')
+    .check()
   await firstWindow
     .locator(
       '[data-component="Field"][data-test="filePath"] [data-test="FilePath"]',
