@@ -29,6 +29,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
+          name: dist
           path: .
       - name: Package and publish application
         run: yarn release
