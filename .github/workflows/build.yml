@@ -7,12 +7,12 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3
+      - uses: actions/checkout@v3
       - name: Use Node.js 16.x
-        uses: actions/setup-node@3
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - uses: actions/cache@3
+      - uses: actions/cache@v3
         with:
           path: "node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
@@ -21,7 +21,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: Upload built code
-        uses: actions/upload-artifact@3
+        uses: actions/upload-artifact@v3
         with:
           name: dist
           path: dist

@@ -15,7 +15,7 @@ jobs:
         run: |
           gem install github_changelog_generator
       - name: Checkout for changelog generation
-        uses: actions/checkout@3
+        uses: actions/checkout@v3
       - name: Generate changelog
         env:
           CHANGELOG_GITHUB_TOKEN: ${{ github.token }}
@@ -23,7 +23,7 @@ jobs:
           IFS='/' read -ra REPO_PARTS <<< "$GITHUB_REPOSITORY"
           github_changelog_generator -u ${REPO_PARTS[0]} -p ${REPO_PARTS[1]}
       - name: Upload changelog
-        uses: actions/upload-artifact@3
+        uses: actions/upload-artifact@v3
         with:
           name: CHANGELOG.md
           path: CHANGELOG.md

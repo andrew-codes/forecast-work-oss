@@ -12,19 +12,19 @@ jobs:
     name: Package application (Windows)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@3
+      - uses: actions/checkout@v3
       - name: Use Node.js 16.x
-        uses: actions/setup-node@3
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - uses: actions/cache@3
+      - uses: actions/cache@v3
         with:
           path: "node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
       - name: Install dependencies
         run: yarn
       - name: Download artifacts
-        uses: actions/download-artifact@3
+        uses: actions/download-artifact@v3
         with:
           path: .
       - name: Package and publish application
@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Windows app
-        uses: actions/upload-artifact@3
+        uses: actions/upload-artifact@v3
         with:
           name: forecasting_windows
           path: dist/*.exe
@@ -41,19 +41,19 @@ jobs:
     name: Package application (Linux)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3
+      - uses: actions/checkout@v3
       - name: Use Node.js 16.x
-        uses: actions/setup-node@3
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - uses: actions/cache@3
+      - uses: actions/cache@v3
         with:
           path: "node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
       - name: Install dependencies
         run: yarn
       - name: Download artifacts
-        uses: actions/download-artifact@3
+        uses: actions/download-artifact@v3
         with:
           path: .
       - name: Package and publish application
@@ -61,12 +61,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Upload Linux app
-        uses: actions/upload-artifact@3
+        uses: actions/upload-artifact@v3
         with:
           name: forecasting_linux
           path: dist/*.deb
       - name: Upload Linux app
-        uses: actions/upload-artifact@3
+        uses: actions/upload-artifact@v3
         with:
           name: forecasting_linux
           path: dist/*.apk
@@ -75,19 +75,19 @@ jobs:
     name: Package application (OSX)
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@3
+      - uses: actions/checkout@v3
       - name: Use Node.js 16.x
-        uses: actions/setup-node@3
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - uses: actions/cache@3
+      - uses: actions/cache@v3
         with:
           path: "node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
       - name: Install dependencies
         run: yarn
       - name: Download artifacts
-        uses: actions/download-artifact@3
+        uses: actions/download-artifact@v3
         with:
           path: .
       - name: Package and publish application
@@ -95,7 +95,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
       - name: Upload OSX app
-        uses: actions/upload-artifact@3
+        uses: actions/upload-artifact@v3
         with:
           name: forecasting_osx
           path: dist/*.dmg
