@@ -1,4 +1,4 @@
-import builder, { Platform } from "electron-builder"
+import { build, Platform } from "electron-builder"
 import type { Configuration } from "electron-builder"
 
 const run = async () => {
@@ -62,7 +62,7 @@ const run = async () => {
       rpm: {},
     }
 
-    const result = await builder.build({
+    const result = await build({
       targets: platform.createTarget(),
       config: options,
     })
