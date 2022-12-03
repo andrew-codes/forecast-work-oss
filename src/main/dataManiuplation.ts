@@ -19,6 +19,7 @@ import {
   sum,
   values,
 } from "lodash/fp"
+import fetch from "node-fetch"
 
 type Throughput = { date: Date; count: number }[]
 
