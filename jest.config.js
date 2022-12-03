@@ -1,6 +1,10 @@
 module.exports = {
   collectCoverageFrom: ["src/**/*.ts", "src/*.ts"],
-  coveragePathIgnorePatterns: ["/node_modules/", "/__tests__/"],
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "/__tests__/",
+    "src/main/main.ts",
+  ],
   moduleFileExtensions: ["json", "js", "ts"],
   preset: "ts-jest",
   coverageReporters: ["cobertura", "lcov", "text"],
