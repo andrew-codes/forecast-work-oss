@@ -8,9 +8,12 @@ on:
         default: "--publish never"
 
 jobs:
-  package_windows:
-    name: Package application (Windows)
-    runs-on: windows-latest
+  package:
+    name: Package application
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js 16.x
@@ -28,74 +31,17 @@ jobs:
         with:
           path: .
       - name: Package and publish application
-        run: yarn release/windows ${{ inputs.publish_flag }}
+        run: yarn release
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      - name: Upload Windows app
+          VERSION: ${{ github.ref_name }}
+          PLATFORM: ${{ runner.os }}
+      - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: forecasting_windows
-          path: dist/*.exe
-
-  package_linux:
-    name: Package application (Linux)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-      - uses: actions/cache@v3
-        with:
-          path: "node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
-      - name: Install dependencies
-        run: yarn
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: .
-      - name: Package and publish application
-        run: yarn release/linux ${{ inputs.publish_flag }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: Upload Linux app
-        uses: actions/upload-artifact@v3
-        with:
-          name: forecasting_linux
-          path: dist/*.deb
-      - name: Upload Linux app
-        uses: actions/upload-artifact@v3
-        with:
-          name: forecasting_linux
-          path: dist/*.apk
-
-  package_osx:
-    name: Package application (OSX)
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 16.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-      - uses: actions/cache@v3
-        with:
-          path: "node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
-      - name: Install dependencies
-        run: yarn
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          path: .
-      - name: Package and publish application
-        run: yarn release/osx ${{ inputs.publish_flag }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: Upload OSX app
-        uses: actions/upload-artifact@v3
-        with:
-          name: forecasting_osx
-          path: dist/*.dmg
+          name: forecast_work
+          path: |
+            - dist/*.exe
+            - dist/*.deb
+            - dist/*apk
+            - dist/*.dmg

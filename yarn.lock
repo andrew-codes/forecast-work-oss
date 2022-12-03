@@ -3012,6 +3012,13 @@ esbuild-openbsd-64@0.15.3:
   resolved "https://registry.yarnpkg.com/esbuild-openbsd-64/-/esbuild-openbsd-64-0.15.3.tgz#fa2e84480fe043480401c73fdfb944ba2d21826d"
   integrity sha512-QL7xYQ4noukuqh8UGnsrk1m+ShPMYIXjOnAQl3siA7VV6cjuUoCxx6cThgcUDzih8iL5u2xgsGRhsviQIMsUuA==
 
+esbuild-register@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/esbuild-register/-/esbuild-register-3.4.1.tgz#fe10cd774b56471db47365ce41d607ab5bdeb713"
+  integrity sha512-iCgs88/1wA5dIRx4i65eSjbkgrQQQJGpY6Z1eD2XPlzrSjbgNtfkw2/rfSMzJ4dTtlOD8EZTxrIA3fyYp0FsMA==
+  dependencies:
+    debug "^4.3.4"
+
 esbuild-sunos-64@0.15.3:
   version "0.15.3"
   resolved "https://registry.yarnpkg.com/esbuild-sunos-64/-/esbuild-sunos-64-0.15.3.tgz#23b8904294344075ce5020155ddd4e28d079cc10"

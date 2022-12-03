@@ -10,19 +10,9 @@ jobs:
       - name: Download artifacts (Windows)
         uses: actions/download-artifact@v3
         with:
-          name: forecasting_windows
+          name: forecast_work
           path: .
-      - name: Download artifacts (OSX)
-        uses: actions/download-artifact@v3
-        with:
-          name: forecasting_osx
-          path: .
-      - name: Download artifacts (Linux)
-        uses: actions/download-artifact@v3
-        with:
-          name: forecasting_linux
-          path: .
-      - name: Upload Release Asset
+      - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ github.token }}
