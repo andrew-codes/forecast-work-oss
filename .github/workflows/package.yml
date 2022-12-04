@@ -33,9 +33,9 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: forecast_work
+          name: forecast_work_${{ runner.os }}
           path: |
-            - dist/**/*.exe
-            - dist/**/*.deb
-            - dist/**/*.apk
-            - dist/**/*.dmg
+            - ./dist/**/*.exe
+            - ./dist/**/*.deb
+            - ./dist/**/*.apk
+            - ./dist/**/*.dmg
