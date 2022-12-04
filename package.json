@@ -1,6 +1,6 @@
 {
   "name": "@andrew-codes/forecast-work",
-  "version": "2.0.0",
+  "version": "2.3.0",
   "description": "Forecast work using your team's historical throughput and the Monte Carlo method.",
   "main": "dist/main/main.js",
   "repository": "git@github.com:andrew-codes/forecast-work.git",
