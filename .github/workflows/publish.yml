@@ -4,10 +4,10 @@ on:
 
 jobs:
   publish:
-    name: Publish to Release
+    name: Publish Release
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifacts (Windows)
+      - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
           name: forecast_work

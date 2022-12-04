@@ -1,4 +1,4 @@
-import builder, { Platform } from "electron-builder"
+import { build, Platform } from "electron-builder"
 import type { Configuration } from "electron-builder"
 
 const run = async () => {
@@ -20,9 +20,9 @@ const run = async () => {
     }
 
     const options: Configuration = {
+      publish: null,
       appId: "codes.andrew.forecast-work",
       productName: "Forecast Work",
-      buildVersion: process.env.VERSION,
       extraMetadata: {
         name: "Forecast Work",
         main: "dist/main/main.js",
@@ -62,7 +62,7 @@ const run = async () => {
       rpm: {},
     }
 
-    const result = await builder.build({
+    const result = await build({
       targets: platform.createTarget(),
       config: options,
     })

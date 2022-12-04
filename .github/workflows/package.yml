@@ -1,11 +1,6 @@
 name: Build and package apps
 on:
   workflow_call:
-    inputs:
-      publish_flag:
-        required: false
-        type: string
-        default: "--publish never"
 
 jobs:
   package:
@@ -29,19 +24,18 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
+          name: dist
           path: .
       - name: Package and publish application
         run: yarn release
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-          VERSION: ${{ github.ref_name }}
           PLATFORM: ${{ runner.os }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: forecast_work
+          name: forecast_work_${{ runner.os }}
           path: |
-            - dist/*.exe
-            - dist/*.deb
-            - dist/*apk
-            - dist/*.dmg
+            - ./dist/**/*.exe
+            - ./dist/**/*.deb
+            - ./dist/**/*.apk
+            - ./dist/**/*.dmg
