@@ -51,9 +51,6 @@ const run = async () => {
       linux: {
         target: ["AppImage", "deb", "apk"],
       },
-      directories: {
-        buildResources: "resources",
-      },
       compression: "store",
       extraFiles: ["LICENSE", "README.md"],
       deb: {
