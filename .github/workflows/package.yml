@@ -1,11 +1,6 @@
 name: Build and package apps
 on:
   workflow_call:
-    inputs:
-      publish_flag:
-        required: false
-        type: string
-        default: "--publish never"
 
 jobs:
   package:
@@ -34,8 +29,6 @@ jobs:
       - name: Package and publish application
         run: yarn release
         env:
-          GH_TOKEN: ${{ github.token }}
-          VERSION: ${{ github.ref_name }}
           PLATFORM: ${{ runner.os }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
