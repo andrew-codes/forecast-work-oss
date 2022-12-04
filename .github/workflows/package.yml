@@ -35,7 +35,7 @@ jobs:
         with:
           name: forecast_work
           path: |
-            - ./dist/*.exe
-            - ./dist/*.deb
-            - ./dist/*.apk
-            - ./dist/*.dmg
+            - dist/**/*.exe
+            - dist/**/*.deb
+            - dist/**/*.apk
+            - dist/**/*.dmg
