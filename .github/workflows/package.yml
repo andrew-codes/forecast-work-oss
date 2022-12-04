@@ -34,7 +34,7 @@ jobs:
       - name: Package and publish application
         run: yarn release
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
           VERSION: ${{ github.ref_name }}
           PLATFORM: ${{ runner.os }}
       - name: Upload artifacts
