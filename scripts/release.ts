@@ -23,6 +23,7 @@ const run = async () => {
       appId: "codes.andrew.forecast-work",
       productName: "Forecast Work",
       buildVersion: process.env.VERSION,
+      publish: "never",
       extraMetadata: {
         name: "Forecast Work",
         main: "dist/main/main.js",

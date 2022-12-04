@@ -15,9 +15,6 @@
     "start": "electron-esbuild dev",
     "prebuild": "yarn clean",
     "build": "cross-env NODE_ENV=\"production\" electron-esbuild build",
-    "release/linux": "electron-builder build --linux deb apk",
-    "release/osx": "electron-builder build --macos dmg",
-    "release/windows": "electron-builder build --windows portable nsis",
     "release": "node -r esbuild-register ./scripts/release.ts",
     "clean": "rimraf dist",
     "lint": "exit 0",
@@ -63,57 +60,5 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^28.0.8",
     "typescript": "~4.6.3"
-  },
-  "build": {
-    "appId": "codes.andrew.forecasting",
-    "productName": "Work Item Forecasting",
-    "extraMetadata": {
-      "name": "Work Item Forecasting",
-      "main": "dist/main/main.js"
-    },
-    "files": [
-      {
-        "from": ".",
-        "filter": [
-          "package.json",
-          "LICENSE"
-        ]
-      },
-      {
-        "from": "dist/main"
-      },
-      {
-        "from": "dist/renderer"
-      },
-      "dist/"
-    ],
-    "win": {
-      "target": [
-        "portable"
-      ],
-      "publish": [
-        "github"
-      ]
-    },
-    "mac": {
-      "target": [
-        "dmg"
-      ],
-      "publish": [
-        "github"
-      ]
-    },
-    "linux": {
-      "target": [
-        "deb",
-        "apk"
-      ],
-      "publish": [
-        "github"
-      ]
-    },
-    "directories": {
-      "buildResources": "resources"
-    }
   }
 }
