@@ -57,6 +57,9 @@ const run = async () => {
         priority: "optional",
       },
       rpm: {},
+      "directories": {
+        "buildResources": "resources"
+      }
     }
 
     const result = await build({
