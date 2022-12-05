@@ -25,9 +25,8 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist
-          path: .
-      - name: Ls dist
-        run: ls dist
+      - name: Ls files
+        run: ls -R
       - name: Package and publish application
         run: yarn release
         env:
