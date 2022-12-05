@@ -25,6 +25,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist
+          path: dist
       - name: Ls files
         run: ls -R
       - name: Package and publish application
