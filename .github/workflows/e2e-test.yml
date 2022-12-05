@@ -25,6 +25,11 @@ jobs:
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       - name: Install browser(s)
         run: yarn playwright install --with-deps chromium
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist
       - name: Test
         run: npx playwright test
         env:
