@@ -26,8 +26,6 @@ jobs:
         with:
           name: dist
           path: dist
-      - name: Ls files
-        run: ls -R
       - name: Package and publish application
         run: yarn release
         env:
@@ -36,8 +34,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: forecast_work_${{ runner.os }}
-          path: |
-            - release/*.exe
-            - release/*.deb
-            - release/*.apk
-            - release/*.dmg
+          path: release/*.*
