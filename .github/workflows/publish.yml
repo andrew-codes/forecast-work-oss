@@ -7,11 +7,18 @@ jobs:
     name: Publish Release
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifacts
+      - name: Download artifacts (Windows)
         uses: actions/download-artifact@v3
         with:
-          name: forecast_work
-          path: forecast_work
+          name: forecast_work_Windows
+      - name: Download artifacts (macOS)
+        uses: actions/download-artifact@v3
+        with:
+          name: forecast_work_macOS
+      - name: Download artifacts (Linux)
+        uses: actions/download-artifact@v3
+        with:
+          name: forecast_work_Linux
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         env:
