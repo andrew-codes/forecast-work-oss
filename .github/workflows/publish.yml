@@ -11,7 +11,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: forecast_work
-          path: .
+          path: forecast_work
       - name: Upload Release Assets
         uses: softprops/action-gh-release@v1
         env:
