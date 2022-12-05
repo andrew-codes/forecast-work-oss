@@ -25,7 +25,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist
-          path: dist
+          path: .
+      - name: Ls dist
+        run: ls dist
       - name: Package and publish application
         run: yarn release
         env:
@@ -35,7 +37,7 @@ jobs:
         with:
           name: forecast_work_${{ runner.os }}
           path: |
-            - ./dist/**/*.exe
-            - ./dist/**/*.deb
-            - ./dist/**/*.apk
-            - ./dist/**/*.dmg
+            - release/*.exe
+            - release/*.deb
+            - release/*.apk
+            - release/*.dmg

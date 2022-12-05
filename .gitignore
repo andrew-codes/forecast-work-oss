@@ -11,3 +11,4 @@ dist/
 coverage
 test-results
 !e2e/fixtures/*.csv
+/release

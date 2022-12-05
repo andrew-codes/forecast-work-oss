@@ -21,7 +21,7 @@ const run = async () => {
 
     const options: Configuration = {
       publish: null,
-      appId: "codes.andrew.forecast-work",
+      appId: "codes.andrew.forecastwork",
       productName: "Forecast Work",
       extraMetadata: {
         name: "Forecast Work",
@@ -41,25 +41,22 @@ const run = async () => {
         "dist/",
       ],
       win: {
-        target: ["portable", "nsis"],
+        target: ["portable"],
       },
       mac: {
         target: ["dmg"],
-        hardenedRuntime: true,
-        gatekeeperAssess: true,
       },
       linux: {
-        target: ["AppImage", "deb", "apk"],
+        target: ["deb", "apk"],
       },
       compression: "store",
-      extraFiles: ["LICENSE", "README.md"],
       deb: {
         priority: "optional",
       },
-      rpm: {},
-      "directories": {
-        "buildResources": "resources"
-      }
+      directories: {
+        buildResources: "resources",
+        output: "release",
+      },
     }
 
     const result = await build({
