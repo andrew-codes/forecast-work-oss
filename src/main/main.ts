@@ -5,7 +5,6 @@ import { format } from "url"
 import { app, BrowserWindow, ipcMain, session } from "electron"
 import { is } from "electron-util"
 import { searchDevtools } from "electron-search-devtools"
-import fetch from "node-fetch"
 import {
   createForecastFromDistribution,
   createSimulationDistribution,

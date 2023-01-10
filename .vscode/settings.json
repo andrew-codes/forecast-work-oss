@@ -5,5 +5,11 @@
       "front_matter_title": ""
     }
   },
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
 }

@@ -1,7 +1,6 @@
 .DS_STORE
 *.csv
 *.pdf
-node_modules
 *.http
 *.env
 build/
@@ -12,3 +11,13 @@ coverage
 test-results
 !e2e/fixtures/*.csv
 /release
+
+node_modules
+
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
