@@ -10,7 +10,7 @@ if (!$myWindowsPrincipal.IsInRole($adminRole)) {
     Exit
 }
 
-Get-ChildItem -Path "$workbenchDir/steps" | ForEach-Object {
+Get-ChildItem -Path "$workbenchDir/dev-env" | ForEach-Object {
     Write-Host "Processing step: $_"
     try {
         powershell -Command "$workbenchDir/dev-env/$_"
