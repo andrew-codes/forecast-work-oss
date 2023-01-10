@@ -8,10 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js 16.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
+      - name: Use yarn@latest
+        run: >-
+          corepack enable
+          corepack prepare yarn@stable --activate
       - uses: actions/cache@v3
         with:
           path: "node_modules"
@@ -19,6 +23,6 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Lint
-        run: yarn lint
+        run: yarn run lint
       - name: Test
-        run: yarn test/unit/ci
+        run: yarn run test/unit/ci
