@@ -11,10 +11,11 @@ coverage
 test-results
 !e2e/fixtures/*.csv
 /release
+
 node_modules
 
+.pnp.*
 .yarn/*
-!.yarn/cache
 !.yarn/patches
 !.yarn/plugins
 !.yarn/releases
