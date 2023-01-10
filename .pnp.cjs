@@ -35,7 +35,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@playwright/test", "npm:1.25.1"],\
             ["@types/jest", "npm:28.1.8"],\
             ["@types/lodash", "npm:4.14.183"],\
-            ["@types/node", "npm:18.7.6"],\
+            ["@types/node", "npm:18.11.18"],\
             ["@types/react", "npm:18.0.17"],\
             ["@types/react-dom", "npm:18.0.6"],\
             ["@types/styled-components", "npm:5.1.26"],\
@@ -56,10 +56,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],\
             ["react-charts", "virtual:2701b895af3ad105ac8e3f758f63484ad618bdd8941c54cee1b6d89b2a50d99f5472d3a77949c63347149608cfc2996555d31eec11de1e529d10c1f3e629898f#npm:3.0.0-beta.48"],\
             ["react-dom", "virtual:2701b895af3ad105ac8e3f758f63484ad618bdd8941c54cee1b6d89b2a50d99f5472d3a77949c63347149608cfc2996555d31eec11de1e529d10c1f3e629898f#npm:17.0.2"],\
+            ["react-is", "npm:18.2.0"],\
             ["rimraf", "npm:3.0.2"],\
             ["styled-components", "virtual:2701b895af3ad105ac8e3f758f63484ad618bdd8941c54cee1b6d89b2a50d99f5472d3a77949c63347149608cfc2996555d31eec11de1e529d10c1f3e629898f#npm:5.3.3"],\
             ["ts-jest", "virtual:2701b895af3ad105ac8e3f758f63484ad618bdd8941c54cee1b6d89b2a50d99f5472d3a77949c63347149608cfc2996555d31eec11de1e529d10c1f3e629898f#npm:28.0.8"],\
-            ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=5d3a66"]\
+            ["typescript", "patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=ad5954"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -96,7 +97,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@playwright/test", "npm:1.25.1"],\
             ["@types/jest", "npm:28.1.8"],\
             ["@types/lodash", "npm:4.14.183"],\
-            ["@types/node", "npm:18.7.6"],\
+            ["@types/node", "npm:18.11.18"],\
             ["@types/react", "npm:18.0.17"],\
             ["@types/react-dom", "npm:18.0.6"],\
             ["@types/styled-components", "npm:5.1.26"],\
@@ -117,10 +118,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react", "npm:17.0.2"],\
             ["react-charts", "virtual:2701b895af3ad105ac8e3f758f63484ad618bdd8941c54cee1b6d89b2a50d99f5472d3a77949c63347149608cfc2996555d31eec11de1e529d10c1f3e629898f#npm:3.0.0-beta.48"],\
             ["react-dom", "virtual:2701b895af3ad105ac8e3f758f63484ad618bdd8941c54cee1b6d89b2a50d99f5472d3a77949c63347149608cfc2996555d31eec11de1e529d10c1f3e629898f#npm:17.0.2"],\
+            ["react-is", "npm:18.2.0"],\
             ["rimraf", "npm:3.0.2"],\
             ["styled-components", "virtual:2701b895af3ad105ac8e3f758f63484ad618bdd8941c54cee1b6d89b2a50d99f5472d3a77949c63347149608cfc2996555d31eec11de1e529d10c1f3e629898f#npm:5.3.3"],\
             ["ts-jest", "virtual:2701b895af3ad105ac8e3f758f63484ad618bdd8941c54cee1b6d89b2a50d99f5472d3a77949c63347149608cfc2996555d31eec11de1e529d10c1f3e629898f#npm:28.0.8"],\
-            ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=5d3a66"]\
+            ["typescript", "patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=ad5954"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -2673,6 +2675,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-node-npm-16.11.49-21a166a769-05545ee49d.zip/node_modules/@types/node/",\
           "packageDependencies": [\
             ["@types/node", "npm:16.11.49"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:18.11.18", {\
+          "packageLocation": "./.yarn/cache/@types-node-npm-18.11.18-d61e8a4a20-03f17f9480.zip/node_modules/@types/node/",\
+          "packageDependencies": [\
+            ["@types/node", "npm:18.11.18"]\
           ],\
           "linkType": "HARD"\
         }],\
@@ -9949,7 +9958,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["hoist-non-react-statics", "npm:3.3.2"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:2701b895af3ad105ac8e3f758f63484ad618bdd8941c54cee1b6d89b2a50d99f5472d3a77949c63347149608cfc2996555d31eec11de1e529d10c1f3e629898f#npm:17.0.2"],\
-            ["react-is", null],\
+            ["react-is", "npm:18.2.0"],\
             ["shallowequal", "npm:1.1.0"],\
             ["supports-color", "npm:5.5.0"]\
           ],\
@@ -10217,7 +10226,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lodash.memoize", "npm:4.1.2"],\
             ["make-error", "npm:1.3.6"],\
             ["semver", "npm:7.3.7"],\
-            ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=5d3a66"],\
+            ["typescript", "patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=ad5954"],\
             ["yargs-parser", "npm:21.1.1"]\
           ],\
           "packagePeers": [\
@@ -10374,10 +10383,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=5d3a66", {\
-          "packageLocation": "./.yarn/cache/typescript-patch-9d18892098-1cb434fbc6.zip/node_modules/typescript/",\
+        ["patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=ad5954", {\
+          "packageLocation": "./.yarn/cache/typescript-patch-7bc527fc0a-1caaea6cb7.zip/node_modules/typescript/",\
           "packageDependencies": [\
-            ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=5d3a66"]\
+            ["typescript", "patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=ad5954"]\
           ],\
           "linkType": "HARD"\
         }]\
