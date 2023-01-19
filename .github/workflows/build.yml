@@ -16,6 +16,7 @@ jobs:
         run: >-
           corepack enable;
           corepack prepare yarn@stable --activate;
+          yarn set version berry;
       - uses: actions/cache@v3
         with:
           path: "node_modules"
