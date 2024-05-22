@@ -1,10 +1,11 @@
-import fs from "fs"
-import path from "path"
-import { parseStream } from "fast-csv"
-import { format } from "url"
-import { app, BrowserWindow, ipcMain, session } from "electron"
+import { app, BrowserWindow, ipcMain } from "electron"
 import { is } from "electron-util"
-import { searchDevtools } from "electron-search-devtools"
+import { parseStream } from "fast-csv"
+import fs from "fs"
+import { get, map, pick, pipe, reduce } from "lodash/fp"
+import path from "path"
+import { format } from "url"
+import { AdoConnection, AdoQueryValues } from "./AdoDataSourceTypes"
 import {
   createForecastFromDistribution,
   createSimulationDistribution,
@@ -13,8 +14,6 @@ import {
   getThroughputByWeek,
   getWorkItemClosedDates,
 } from "./dataManiuplation"
-import { get, map, pick, pipe, reduce } from "lodash/fp"
-import { AdoConnection, AdoQueryValues } from "./AdoDataSourceTypes"
 
 let win: BrowserWindow | null = null
 
@@ -202,17 +201,8 @@ async function createWindow() {
     }
 
     if (isDev) {
-      searchDevtools("REACT").then((devtools) => {
-        console.log(devtools)
-        session.defaultSession.loadExtension(devtools, {
-          allowFileAccess: true,
-        })
-      })
-      searchDevtools("REDUX").then((devtools) => {
-        session.defaultSession.loadExtension(devtools, {
-          allowFileAccess: true,
-        })
-      })
+      // require('electron-react-devtools').install()
+      // require('electron-redux-devtools').install()
       win!.webContents.openDevTools()
     }
   })
