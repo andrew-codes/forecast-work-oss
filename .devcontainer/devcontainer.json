@@ -1,33 +1,43 @@
 {
   "name": "Electron",
   "build": {
-    "dockerfile": "Dockerfile",
-    "context": ".."
+    "dockerfile": "Dockerfile"
   },
-  "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
-  },
-  "extensions": [
-    "capaj.vscode-exports-autocomplete",
-    "christian-kohler.npm-intellisense",
-    "cmstead.js-codeformer",
-    "eamodio.gitlens",
-    "esbenp.prettier-vscode",
-    "hbenl.vscode-test-explorer",
-    "hbenl.vscode-test-explorer-liveshare",
-    "humao.rest-client",
-    "kavod-io.vscode-jest-test-adapter",
-    "kisstkondoros.vscode-codemetrics",
-    "ms-toolsai.jupyter-renderers",
-    "ms-toolsai.jupyter",
-    "ms-vsliveshare.vsliveshare",
-    "pflannery.vscode-versionlens",
-    "streetsidesoftware.code-spell-checker",
-    "WallabyJs.wallaby-vscode",
-    "wix.vscode-import-cost",
-    "yzhang.markdown-all-in-one"
-  ],
-
+  "customizations": {
+    "devpod": {
+      "prebuildRepository": "ghcr.io/andrew-codes/forecast-work-oss"
+    },
+    "vscode": {
+      "settings": {
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "bash",
+            "icon": "terminal-bash"
+          }
+        },
+        "workbench.colorTheme": "Dracula Pro",
+        "extensions": [
+          "capaj.vscode-exports-autocomplete",
+          "christian-kohler.npm-intellisense",
+          "cmstead.js-codeformer",
+          "eamodio.gitlens",
+          "esbenp.prettier-vscode",
+          "hbenl.vscode-test-explorer",
+          "hbenl.vscode-test-explorer-liveshare",
+          "humao.rest-client",
+          "kavod-io.vscode-jest-test-adapter",
+          "kisstkondoros.vscode-codemetrics",
+          "ms-toolsai.jupyter-renderers",
+          "ms-toolsai.jupyter",
+          "ms-vsliveshare.vsliveshare",
+          "pflannery.vscode-versionlens",
+          "streetsidesoftware.code-spell-checker",
+          "WallabyJs.wallaby-vscode",
+          "wix.vscode-import-cost",
+          "yzhang.markdown-all-in-one"
+        ]      
+      }
+  },  
   "mounts": [
     "source=${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
     "source=${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind"
@@ -36,6 +46,5 @@
     "DISPLAY": "host.docker.internal:0.0",
     "LIBGL_ALWAYS_INDIRECT": "0"
   },
-  "postCreateCommand": "",
   "shutdownAction": "none"
 }
