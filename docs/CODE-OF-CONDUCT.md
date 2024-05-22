@@ -59,7 +59,4 @@ This also applies to maintainers who do not follow the Code of Conduct.
 4. PERMANENT BAN: an absolute prohibition on all community interaction.
 
 ## Attribution
-This Code of Conduct is adapted from the Contributor Covenant, version 1.4, 
-available at https://www.contributor-covenant.org/version/1/4/code-of-conduct.html.
-
-For answers to common questions about this code of conduct, see https://www.contributor-covenant.org/faq
+This Code of Conduct is adapted from the Contributor Covenant, version 1.4. For answers to common questions about this code of conduct, see https://www.contributor-covenant.org/faq

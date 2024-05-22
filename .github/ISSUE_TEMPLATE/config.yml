@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: forecast-work
+    url: https://github.com/andrew-codes/forecast-work
+    about: Forecast work is a desktop application that enables you to answer question about the time frame and how much work can be delivered using actual historical data of your team. Additionally,  It also displays the degree of confidence in the prediction.
