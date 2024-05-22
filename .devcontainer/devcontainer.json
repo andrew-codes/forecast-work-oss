@@ -35,17 +35,12 @@
           "WallabyJs.wallaby-vscode",
           "wix.vscode-import-cost",
           "yzhang.markdown-all-in-one"
-        ]      
+        ]
       }
     }
-  },  
-  "mounts": [
-    "source=${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
-    "source=${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind"
-  ],
+  },
   "containerEnv": {
     "DISPLAY": "host.docker.internal:0.0",
     "LIBGL_ALWAYS_INDIRECT": "0"
-  },
-  "shutdownAction": "none"
+  }
 }
