@@ -7,15 +7,15 @@ on:
 
 jobs:
   lint_and_test:
-    uses: andrew-codes/forecast-work/.github/workflows/lint-and-test.yml@main
+    uses: andrew-codes/forecast-work-oss/.github/workflows/lint-and-test.yml@main
 
   build:
-    uses: andrew-codes/forecast-work/.github/workflows/build.yml@main
+    uses: andrew-codes/forecast-work-oss/.github/workflows/build.yml@main
 
   e2e:
     needs: [build]
-    uses: andrew-codes/forecast-work/.github/workflows/e2e-test.yml@main
+    uses: andrew-codes/forecast-work-oss/.github/workflows/e2e-test.yml@main
 
   package:
     needs: [build]
-    uses: andrew-codes/forecast-work/.github/workflows/package.yml@main
+    uses: andrew-codes/forecast-work-oss/.github/workflows/package.yml@main
