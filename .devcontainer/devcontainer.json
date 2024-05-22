@@ -37,6 +37,7 @@
           "yzhang.markdown-all-in-one"
         ]      
       }
+    }
   },  
   "mounts": [
     "source=${localEnv:USERPROFILE}/.ssh/id_rsa,target=/root/.ssh/id_rsa,type=bind",
