@@ -38,12 +38,12 @@ The application then sorts these scenarios by the statistical likelihood of them
 
 ## How do I get Started?
 
-Download the latest release for your platform from the [Releases page](https://github.com/andrew-codes/forecast-work/releases). Windows, MacOSX, and Linux are all supported.
+Download the latest release for your platform from the [Releases page](https://github.com/andrew-codes/forecast-work-oss/releases). Windows, MacOSX, and Linux are all supported.
 
 ## What if I find something Defective or an Issue?
 
-1. First, please check your issue already exists. You can search open issues on [GitHub issues](https://github.com/andrew-codes/forecast-work/issues).
-2. If you cannot find your problem already opened as an issue, then please open a new [GitHub issue](https://github.com/andrew-codes/forecast-work/issues/new).
+1. First, please check your issue already exists. You can search open issues on [GitHub issues](https://github.com/andrew-codes/forecast-work-oss/issues).
+2. If you cannot find your problem already opened as an issue, then please open a new [GitHub issue](https://github.com/andrew-codes/forecast-work-oss/issues/new).
 
 ## What if I want to Contribute?
 
