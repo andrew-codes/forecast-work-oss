@@ -5,7 +5,7 @@
 This is a desktop application that enables you to answer the following questions using actual historical data of your team:
 
 1. What is the time frame and its confidence level for my team to deliver N work items?
-2. How many work items can be delivered in N days and how confident is this prediction?
+2. How many work items can be delivered in N days and how confident is this prediction? (wip)
 
 ![Screenshot](./docs/screenshot.png)
 
