@@ -35,7 +35,7 @@ jobs:
         env:
           PLATFORM: ${{ runner.os }}
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: forecast_work_${{ runner.os }}
           path: release/*.*
